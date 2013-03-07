@@ -4,8 +4,47 @@
   <uri>http://eprints/id/epm/DataCiteDoi</uri>
   <documents>
     <document>
+      <files>
+        <file>
+          <filename>epm/DataCiteDoi/cfg/cfg.d/z_datacitedoi.pl</filename>
+          <mime_type>text/plain</mime_type>
+          <hash>fcb3176e88cf0bccb6c8e000bd1ac0da</hash>
+          <hash_type>MD5</hash_type>
+          <filesize>1070</filesize>
+        </file>
+        <file>
+          <filename>plugins/EPrints/Plugin/Export/DataCiteXML.pm</filename>
+          <mime_type>application/x-symlink</mime_type>
+          <hash>84f4180876ff95bdde9f78a6a4c300e6</hash>
+          <hash_type>MD5</hash_type>
+          <filesize>3898</filesize>
+        </file>
+        <file>
+          <filename>static/images/epm/datacitedoi.png</filename>
+          <mime_type>application/x-symlink</mime_type>
+          <hash>14e9e2be0a73f452533488634aaea66e</hash>
+          <hash_type>MD5</hash_type>
+          <filesize>101504</filesize>
+        </file>
+      </files>
+      <mime_type>application/x-symlink</mime_type>
       <format>other</format>
+      <main>static/images/epm/datacitedoi.png</main>
       <content>install</content>
+    </document>
+    <document>
+      <files>
+        <file>
+          <filename>static/images/epm/datacitedoi.png</filename>
+          <mime_type>application/x-symlink</mime_type>
+          <hash>14e9e2be0a73f452533488634aaea66e</hash>
+          <hash_type>MD5</hash_type>
+          <filesize>101504</filesize>
+        </file>
+      </files>
+      <format>image</format>
+      <main>static/images/epm/datacitedoi.png</main>
+      <content>coverimage</content>
     </document>
   </documents>
   <version>0.9.0</version>
@@ -18,4 +57,5 @@
     </item>
   </creators>
   <title>Data Cite DOI Registration</title>
+  <icon>images/epm/datacitedoi.png</icon>
 </epm>
