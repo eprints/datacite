@@ -40,7 +40,7 @@ sub output_dataobj
 
 		my $entry = $xml->create_element( "resource", xmlns=>"http://datacite.org/schema/kernel-2.2", "xmlns:xsi"=>"http://www.w3.org/2001/XMLSchema-instance", "xsi:schemaLocation"=>"http://datacite.org/schema/kernel-2.2 http://schema.datacite.org/meta/kernel-2.2/metadata.xsd" );
 		
-	    $entry->appendChild( $xml->create_data_element( "identifier", $thisdoi, identifierType=>"DOI" ) );
+	    $entry->appendChild( $xml->create_data_element( "identifier", $dataobj->get_value( $repo->get_conf( "datacitedoi", "eprintdoifield") ) , identifierType=>"DOI" ) );
 		
 
 		my $creators = $xml->create_element( "creators" );
@@ -81,14 +81,14 @@ sub output_dataobj
 		}
 
 
-		if ($dataobj->exists_and_set( "datestamp" )) {
+		if ($dataobj->exists_and_set( "subjects" )) {
 			my $subjects = $dataobj->get_value("subjects");
 			if( EPrints::Utils::is_set( $subjects ) ){
 				my $subjects_tag = $xml->create_element( "subjects" );
 				foreach my $val (@$subjects){
 		                my $subject = EPrints::DataObj::Subject->new( $repo, $val );
 				           next unless defined $subject;
-				       	$subjects_tag->appendChild(  $xml->create_data_element( "title",  $subject->render_description  ) );
+				       	$subjects_tag->appendChild(  $xml->create_data_element( "subject",  $subject->render_description  ) );
 				
 				}
 				$entry->appendChild( $subjects_tag );

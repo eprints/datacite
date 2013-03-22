@@ -2,10 +2,19 @@
 $c->{plugins}{"Export::DataCiteXML"}{params}{disable} = 0;
 
 
+$c->{datacitedoi}{eprintdoifield} = "id_number";
+$c->{datacitedoi}{eprintstatus} = {inbox=>0,buffer=>1,archive=>1,deletion=>0};
+
+
 #set these (you will get the from data site)
 # doi = {prefix}/{repoid}/{eprintid}
 $c->{datacitedoi}{prefix} = "10.5072";
 $c->{datacitedoi}{repoid} = $c->{host};
+
+$c->{datacitedoi}{apiurl} = "https://test.datacite.org/mds/";
+$c->{datacitedoi}{user} = "USER";
+$c->{datacitedoi}{pass} = "PASS";
+
 
 # datacite requires a Publisher 
 # The name of the entity that holds, archives, publishes, 
