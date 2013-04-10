@@ -14,11 +14,11 @@ use Crypt::SSLeay;
  
 sub datacite_doi
  {
-       my( $self, $repository, $eprint_id ) = @_;
+       my( $self, $eprint) = @_;
 
-		my $eprint =  $repository->eprint(  $eprint_id );
-
-		my $thisdoi = $repository->get_conf( "datacitedoi", "prefix")."/". $repository->get_conf( "datacitedoi", "repoid")."/".$eprint_id;
+		my $repository = $self->repository();
+		
+		my $thisdoi = $repository->get_conf( "datacitedoi", "prefix")."/". $repository->get_conf( "datacitedoi", "repoid")."/".$eprint->id;
 	
 		my $eprintdoifield = $repository->get_conf( "datacitedoi", "eprintdoifield");
 		
@@ -27,10 +27,7 @@ sub datacite_doi
 		my $shoulddoi = $repository->get_conf( "datacitedoi", "eprintstatus",  $eprint->value( "eprint_status" ));
 		
 		#Check Doi Status
-		if(!$shoulddoi) return;
-	
-	
-	
+		if(!$shoulddoi){ return; }
 		
 		#check if doi has been set;
 		if( $eprint->exists_and_set( $eprintdoifield )) {
@@ -39,9 +36,7 @@ sub datacite_doi
 				return;
 			}
 		}else{
-			$eprint->update( {
-			    $eprintdoifield => $thisdoi
-			  });
+			$eprint->set_value($eprintdoifield, $thisdoi);
 			$eprint->commit();
 		}
 		
@@ -55,9 +50,10 @@ sub datacite_doi
 		$response_code =  datacite_request("POST", $url."metadata", $user_name, $user_pw, $xml, "application/xml;charset=UTF-8");
 		
 		#register doi
-		my $doi_reg = "doi=$thisdoi\nurl=".$eprint->get_url();
+		my $doi_reg = "doi=$thisdoi\nurl=".$eprint->uri();
 		$response_code =  datacite_request("POST", $url."doi", $user_name, $user_pw, $doi_reg, "text/plain;charset=UTF-8");
 
+		return undef;
 }
 
 

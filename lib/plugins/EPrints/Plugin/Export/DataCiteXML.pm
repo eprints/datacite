@@ -22,7 +22,6 @@ sub new
         $self->{accept} = [ 'dataobj/eprint'];
         $self->{visible} = 'all';
         $self->{suffix} = '.xml';
-##       $self->{mimetype} = 'text/plain; charset=utf-8';
         $self->{mimetype} = 'application/xml; charset=utf-8';
   
       return $self;
