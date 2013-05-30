@@ -111,5 +111,30 @@ Who it works
 This is added to the queue and actually mints the doi.
 
 /lib/plugins/EPrints/Plugin/Export/DataCiteXML.pm
-This exports the metadata xml required for minting, this can be used independently and through the user interface.
+This exports the metadata xml required for minting, this can be used independently and through the user interface. 
+
+By default the plugin uses the following mapping:
+```xml
+<?xml version="1.0"?>
+<resource xmlns="http://datacite.org/schema/kernel-2.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-2.2 http://schema.datacite.org/meta/kernel-2.2/metadata.xsd">
+	<identifier identifierType="DOI">[[From Config: $c->{datacitedoi}{prefix}/$c->{datacitedoi}{repoid]]/{{Eprintid}}</identifier>
+	<creators>
+		<creator>
+			<creatorName>[[From Eprint: Creators]]</creatorName>
+		</creator>
+	</creators>
+	<titles>
+		<title>[[From Eprint: Title]]/title>
+	</titles>
+	<publisher>[[From Config: $c->{datacitedoi}{publisher}]]</publisher>
+	<publicationYear>[[From Eprint: Year]]</publicationYear>
+	<subjects>
+		<subject>[[From Eprints: Subjects]]</subject>
+	</subjects>
+	<resourceType resourceTypeGeneral="[[Mapped From Config: $c->{datacitedoi}{typemap}]]">[[Mapped From Config: $c->{datacitedoi}{typemap}]]</resourceType>
+	<alternateIdentifiers>
+		<alternateIdentifier alternateIdentifierType="URL">[[From Eprints: Subjects]]</alternateIdentifier>
+	</alternateIdentifiers>
+</resource>
+```
 
