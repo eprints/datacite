@@ -104,7 +104,7 @@ $c->add_dataset_trigger( "eprint", EP_TRIGGER_STATUS_CHANGE , sub {
  
 });
 ```
-Who it works
+How it works
 -------------
 
 /lib/plugins/EPrints/Plugin/Event/DataCiteEvent.pm
