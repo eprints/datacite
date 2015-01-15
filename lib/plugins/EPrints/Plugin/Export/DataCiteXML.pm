@@ -5,7 +5,6 @@ EPrints::Plugin::Export::DataCiteXML
 =cut
 
 package EPrints::Plugin::Export::DataCiteXML;
-
 use EPrints::Plugin::Export::Feed;
 
 @ISA = ('EPrints::Plugin::Export::Feed');
@@ -23,7 +22,8 @@ sub new
         $self->{visible} = 'all';
         $self->{suffix} = '.xml';
         $self->{mimetype} = 'application/xml; charset=utf-8';
-  
+ 	$self->{arguments}->{doi} = undef;
+ 
       return $self;
 }
 
@@ -33,36 +33,49 @@ sub output_dataobj
 
  		my $repo = $self->{repository};
  		my $xml = $repo->xml;
-
-
-		my $thisdoi = $repo->get_conf( "datacitedoi", "prefix")."/". $repo->get_conf( "datacitedoi", "repoid")."/".$dataobj->id;
-
-		my $entry = $xml->create_element( "resource", xmlns=>"http://datacite.org/schema/kernel-2.2", "xmlns:xsi"=>"http://www.w3.org/2001/XMLSchema-instance", "xsi:schemaLocation"=>"http://datacite.org/schema/kernel-2.2 http://schema.datacite.org/meta/kernel-2.2/metadata.xsd" );
 		
-	    $entry->appendChild( $xml->create_data_element( "identifier", $dataobj->get_value( $repo->get_conf( "datacitedoi", "eprintdoifield") ) , identifierType=>"DOI" ) );
+		#reference the datacite schema from config
+		my $entry = $xml->create_element( "resource", 
+			xmlns=> $repo->get_conf( "datacitedoi", "xmlns"), 
+			"xmlns:xsi"=>"http://www.w3.org/2001/XMLSchema-instance", 
+			"xsi:schemaLocation" => $repo->get_conf( "datacitedoi", "schemaLocation")); 
+
+		#RM We pass in the DOI from Event::DataCite... or from --args on the cmd line 
+		my $thisdoi = $opts{doi};
+		#RM coin a DOI if either 
+			# - not come via event or 
+			# - no doi arg passed in via cmd_line
+		# ie when someone exports DataCiteXML from the Action tab
+		if(!defined $thisdoi){
+			#nick the coining sub from event plugin
+			my $event = $repo->plugin("Event::DataCiteEvent");
+			$thisdoi = $event->coin_doi($repo, $dataobj);
+			#coin_doi may return an event error code if no prefix present assume this is the case
+			my $prefix = $repo->get_conf( "datacitedoi", "prefix");
+			return $thisdoi if($thisdoi !~ /^$prefix/);
+		}
+
+	   	$entry->appendChild( $xml->create_data_element( "identifier", $thisdoi , identifierType=>"DOI" ) );
 		
+		#RM otherwise we'll leave this alone for now
 
 		my $creators = $xml->create_element( "creators" );
 		if( $dataobj->exists_and_set( "creators" ) )
-        {
+        	{
 	
-                my $names = $dataobj->get_value( "creators" );
-                foreach my $name ( @$names )
-                {
-                        my $author = $xml->create_element( "creator" );
+			my $names = $dataobj->get_value( "creators" );
+			foreach my $name ( @$names )
+			{
+				my $author = $xml->create_element( "creator" );
 
-                        my $name_str = EPrints::Utils::make_name_string( $name->{name});
-                        $author->appendChild( $xml->create_data_element(
-                                                "creatorName",
-                                                $name_str ) );
+				my $name_str = EPrints::Utils::make_name_string( $name->{name});
+				$author->appendChild( $xml->create_data_element(
+							"creatorName",
+							$name_str ) );
 
-                        #$author->appendChild( $xml->create_data_element(
-                         #                       "email",
-                          #                      $name->{id} ) );
-
-                        $creators->appendChild( $author );
-                }
-        }
+				$creators->appendChild( $author );
+			}
+        	}
 		$entry->appendChild( $creators );
 
 		if ($dataobj->exists_and_set( "title" )) {
@@ -71,7 +84,7 @@ sub output_dataobj
 			$entry->appendChild( $titles );
 		}
 		
-		$entry->appendChild( $xml->create_data_element( "publisher", $repo->get_conf( "datacitedoi", "repoid") ) );
+		$entry->appendChild( $xml->create_data_element( "publisher", $repo->get_conf( "datacitedoi", "publisher") ) );
 	
 		if ($dataobj->exists_and_set( "datestamp" )) {
 		    $dataobj->get_value( "datestamp" ) =~ /^([0-9]{4})/;
@@ -96,7 +109,7 @@ sub output_dataobj
 	  
 	
 		my $thisresourceType = $repo->get_conf( "datacitedoi", "typemap", $dataobj->get_value("type") ); 
-		if($thisresourceType!= undef ){
+		if(defined $thisresourceType ){
 			$entry->appendChild( $xml->create_data_element( "resourceType", $thisresourceType->{'v'},  resourceTypeGeneral=>$thisresourceType->{'a'}) );
 		}
 		
@@ -105,7 +118,9 @@ sub output_dataobj
 		$alternateIdentifiers->appendChild(  $xml->create_data_element( "alternateIdentifier",  $dataobj->get_url() , alternateIdentifierType=>"URL" ) );
 		$entry->appendChild( $alternateIdentifiers );
 	
-       return '<?xml version="1.0" encoding="UTF-8"?>'."\n".$xml->to_string($entry);
+
+		#TODO Seek, identify and include for registration the optional datacite fields
+	       return '<?xml version="1.0" encoding="UTF-8"?>'."\n".$xml->to_string($entry);
 }
 
 1;
