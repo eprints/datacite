@@ -5,27 +5,27 @@ EPrints::Plugin::Event::DataCiteEvent
 =cut
 
 package EPrints::Plugin::Event::DataCiteEvent;
- 
+
 use EPrints::Plugin::Event;
 use LWP;
-use Crypt::SSLeay;
+# use Crypt::SSLeay;
 use HTTP::Headers::Util;
 
 @ISA = qw( EPrints::Plugin::Event );
- 
+
 sub datacite_doi
  {
        my( $self, $dataobj) = @_;
 
 		my $repository = $self->repository();
-	
+
 		#Check object status first.... TODO Make work for dataobj == doument (just in case)
-		my $shoulddoi = $repository->get_conf( "datacitedoi", "eprintstatus",  $dataobj->value( "eprint_status" ));	
+		my $shoulddoi = $repository->get_conf( "datacitedoi", "eprintstatus",  $dataobj->value( "eprint_status" ));
 		#Check Doi Status
-		if(!$shoulddoi){ 
+		if(!$shoulddoi){
 			$repository->log("Attempt to coin DOI for item that is not in the required area (see \$c->{datacitedoi}->{eprintstatus})");
 			return EPrints::Const::HTTP_INTERNAL_SERVER_ERROR;
-		}	
+		}
 
 		my $thisdoi = $self->coin_doi($repository,$dataobj);
 		#coin_doi may return an event error code if no prefix present assume this is the case
@@ -41,12 +41,12 @@ sub datacite_doi
 		$url.="/" if($url !~ /\/$/); #attach slash if config has forgotten
 		my $user_name = $repository->get_conf( "datacitedoi", "user");
 		my $user_pw = $repository->get_conf( "datacitedoi", "pass");
-		
+
 		#register metadata;
 		my($response_content, $response_code) =  datacite_request("POST", $url."metadata", $user_name, $user_pw, $xml, "application/xml;charset=UTF-8");
 		if($response_code !~ /20(1|0)/){
 			$repository->log("Metadata response from datacite api: $response_code: $response_content");
-			$repository->log("BTW the \$doi was:\n$thisdoi");	
+			$repository->log("BTW the \$doi was:\n$thisdoi");
 			return EPrints::Const::HTTP_INTERNAL_SERVER_ERROR;
 		}
 		#register doi
@@ -94,7 +94,7 @@ sub datacite_request {
   return ($res->content(),$res->code());
 }
 
-#RM lets do the DOI coining somewhere (reasonably) accessible 
+#RM lets do the DOI coining somewhere (reasonably) accessible
 sub coin_doi {
 
        my( $self, $repository, $dataobj) = @_;
@@ -113,7 +113,7 @@ sub coin_doi {
 	my $thisdoi = $prefix.$delim1.$repository->get_conf( "datacitedoi", "repoid").$delim2.$id;
 
 	my $eprintdoifield = $repository->get_conf( "datacitedoi", "eprintdoifield");
-	
+
 	#Custom DOIS
 	#if DOI field is set attempt to use that if config allows
 	if($dataobj->exists_and_set( $eprintdoifield) ){
@@ -125,12 +125,14 @@ sub coin_doi {
 		}
 		#we are allowed (check prefix just in case)
 		$thisdoi = $dataobj->get_value( $eprintdoifield );
-		if($thisdoi !~ /^$prefix/){
-			$repository->log("Prefix does not match ($prefix) for custom DOI: $thisdoi");
-			$dataobj->set_value($eprintdoifield, ""); #unset the bad DOI!!
-			$dataobj->commit();
-			return EPrints::Const::HTTP_INTERNAL_SERVER_ERROR;
-		}#We'll leave Datacite to do any further syntax checking etc...
+    # AH commented out because when there is an existing DOI (e.g. one issued by the publisher)
+    # the condition is always true and therefore, existing DOI becomes an empty string
+		# if($thisdoi !~ /^$prefix/){
+		# 	$repository->log("Prefix does not match ($prefix) for custom DOI: $thisdoi");
+		# 	$dataobj->set_value($eprintdoifield, ""); #unset the bad DOI!!
+		# 	$dataobj->commit();
+		# 	return EPrints::Const::HTTP_INTERNAL_SERVER_ERROR;
+		# }#We'll leave Datacite to do any further syntax checking etc...
 	}
 
 	return $thisdoi;
