@@ -16,12 +16,12 @@ $c->{datacitedoi}{apiurl} = "https://test.datacite.org/mds/";
 $c->{datacitedoi}{user} = "USER";
 $c->{datacitedoi}{pass} = "PASS";
 
-# datacite requires a Publisher 
-# The name of the entity that holds, archives, publishes, 
-# prints, distributes, releases, issues, or produces the 
-# resource. This property will be used to formulate the 
+# datacite requires a Publisher
+# The name of the entity that holds, archives, publishes,
+# prints, distributes, releases, issues, or produces the
+# resource. This property will be used to formulate the
 # citation, so consider the prominence of the role.
-# eg World Data Center for Climate (WDCC); 	
+# eg World Data Center for Climate (WDCC);
 $c->{datacitedoi}{publisher} = "Eprints Repo";
 
 # Namespace and location for datacite XML schema
@@ -53,7 +53,7 @@ $c->{datacitedoi}{typemap}{video} = {v=>'Video',a=>'Film'};
 #### DOI syntax config ####
 ###########################
 
-# Set config of DOI delimiters 
+# Set config of DOI delimiters
 # Feel free to change, but they must conform to DOI syntax
 # If not set will default to prefix/repoid/id the example below gives prefix/repoid.id
 $c->{datacitedoi}{delimiters} = ["/","."];
@@ -93,9 +93,9 @@ if($c->{datacitedoi}{auto_coin}){
        my ( %params ) = @_;
 
        my $repository = %params->{repository};
- 
+
        return undef if (!defined $repository);
-	
+
 		if (defined %params->{dataobj}) {
 			my $dataobj = %params->{dataobj};
 			my $eprint_id = $dataobj->id;
@@ -105,7 +105,7 @@ if($c->{datacitedoi}{auto_coin}){
 				params => [$dataobj->internal_uri],
 			});
      	}
- 
+
 	});
 }
 
@@ -115,3 +115,77 @@ if($c->{datacitedoi}{action_coin}){
  	$c->{plugins}{"Screen::EPrint::Staff::CoinDOI"}{params}{disable} = 0;
 }
 
+
+
+
+
+
+$c->{funderrr} = sub
+ {
+
+my ( $xml, $entry, $dataobj ) = @_;
+
+my $funders = $dataobj->get_value( "funders" );
+# my $grant = $dataobj->get_value( "grant" );
+my $projects = $dataobj->get_value( "projects" );
+  if ($dataobj->exists_and_set( "funders" )) {
+    my $thefunders = $xml->create_element( "funders" );
+    foreach my $funder ( @$funders )
+    {
+      my $fund = $funder->{funders};
+      my $grant = $funder->{grant};
+
+
+      my $other = $funder->{other}->{funder};
+
+      foreach my $project ( @$projects )
+      {
+
+        my $proj = $project->{name};
+
+
+    # $thefunders->appendChild(  $xml->create_data_element( "funderName", $other) );
+    $thefunders->appendChild(  $xml->create_data_element( "funderName", $fund) );
+    $thefunders->appendChild(  $xml->create_data_element( "awardNumber", $grant) );
+    # $thefunders->appendChild(  $xml->create_data_element( "awardTitle", $proj) );
+}
+    # print STDERR Dumper $funder;
+
+}
+
+    $entry->appendChild( $thefunders );
+
+}
+};
+
+
+
+$c->{laaanguages} = sub
+ {
+	 my ( $xml, $entry, $dataobj ) = @_;
+ #
+ 	my $lan = $dataobj->get_value( "language" );
+ 		if ($dataobj->exists_and_set( "language" )) {
+ 			foreach my $la ( @$lan )
+ 			{
+ 				my $thelanguage = $la->{l};
+  $entry->appendChild( $xml->create_data_element( "language", $thelanguage) );
+ 	}
+ }
+ }
+
+# $c->{laaanguages} = sub
+# {
+#
+# my ( $xml, $entry, $dataobj ) = @_;
+#
+# 	my $lan = $dataobj->get_value( "language" );
+# 		if ($dataobj->exists_and_set( "language" )) {
+# 			foreach my $la ( @$lan )
+# 			{
+# 				my $thelanguage = $la->{l};
+#  $entry->appendChild( $xml->create_data_element( "language", $thelanguage) );
+# 	}
+# }
+#
+# }
