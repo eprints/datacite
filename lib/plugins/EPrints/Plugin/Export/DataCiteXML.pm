@@ -63,7 +63,7 @@ sub output_dataobj
 
 		#RM otherwise we'll leave this alone for now
 
-    # my $creators = $xml->create_element( "creators" );
+
     if( $dataobj->exists_and_set( "creators" ) )
           {
               my $creators = $xml->create_element( "creators" );
@@ -75,10 +75,9 @@ sub output_dataobj
         my $author = $xml->create_element( "creator" );
 
         my $name_str = EPrints::Utils::make_name_string( $name->{name});
-        # my $family = EPrints::Utils::make_family_name_string( $name->{family}->{name});
-        # my $orcid = $name->get_value("orcid");
 
-          # my $orc= $dataobj->get_value( "creator_orcid" );
+
+
         my $family = $name->{name}->{family};
         my $given = $name->{name}->{given};
         my $orcid = $name->{orcid};
@@ -91,9 +90,9 @@ sub output_dataobj
                 if ($dataobj->exists_and_set( "creators_orcid" )) {
                   print STDERR Dumper $orcid;
         $author->appendChild( $xml->create_data_element("nameIdentifier", $orcid, schemeURI=>"http://orcid.org/", nameIdentifierScheme=>"ORCID" ) );
-        # $author->appendChild( $xml->create_data_element("affillation", $name_str) );
+
 }
-# print STDERR Dumper $orcid;
+
         $creators->appendChild( $author );
       }
 
@@ -104,7 +103,7 @@ sub output_dataobj
     if ($dataobj->exists_and_set( "title" )) {
 			my $titles = $xml->create_element( "titles" );
 		 	$titles->appendChild(  $xml->create_data_element( "title",  $dataobj->render_value( "title" ), "xml:lang"=>"en-us" ) );
-      # $titles->appendChild(  $xml->create_data_element( "title",  $dataobj->render_value( "title" ), "xml:lang"=>"en-us", titleType=>"Subtitle" ) );
+
       $entry->appendChild( $titles );
 		}
 
@@ -117,7 +116,7 @@ if ($dataobj->exists_and_set( "date" )) {
 }
 
 
-# my $sub = $dataobj->get_value( "keywords" );
+
     if ($dataobj->exists_and_set( "keywords" )) {
       my $sub = $dataobj->get_value( "keywords" );
       my $subjects = $xml->create_element( "subjects" );
@@ -127,8 +126,7 @@ if ($dataobj->exists_and_set( "date" )) {
     }
 
 
-      # my $author = $xml->create_element( "contributors" );
-    # my $contributors = $xml->create_element( "contributors" );
+
     if( $dataobj->exists_and_set( "contributors" ) )
           {
             my $contributors = $xml->create_element( "contributors" );
@@ -141,27 +139,24 @@ if ($dataobj->exists_and_set( "date" )) {
         my $author = $xml->create_element( "contributor" );
 
         my $name_str = EPrints::Utils::make_name_string( $name->{name});
-        # my $family = EPrints::Utils::make_family_name_string( $name->{family}->{name});
-        # my $orcid = $name->get_value("orcid");
+
         my $orcid = $name->{orcid};
-        #print out the phrase too
-        # my $type = $name->{type};
-        # print STDERR Dumper $name;
+
         my $typee = $name->{type};
         my $family = $name->{name}->{family};
         my $given = $name->{name}->{given};
-        # $author->appendChild( $xml->create_data_element("contributor") );
+
         $author->appendChild( $xml->create_data_element("contributorName", $name_str ) );
         $author->appendChild( $xml->create_data_element("givenName",$given ) );
         $author->appendChild( $xml->create_data_element("familyName", $family ) );
 
 
-        # print STDERR Dumper $typee;
+
 
         if ($dataobj->exists_and_set( "contributors_orcid" )) {
       my $orcid = $name->{orcid};
     $author->appendChild( $xml->create_data_element("nameIdentifier", $orcid, schemeURI=>"http://orcid.org/", nameIdentifierScheme=>"ORCID" ) );
-    # $author->appendChild( $xml->create_data_element("affillation", $name_str) );
+
     }
     if ($dataobj->exists_and_set( "creator_affiliation" )) {
     my $affiliation = $dataobj->get_value("creator_affiliation");
@@ -169,32 +164,13 @@ if ($dataobj->exists_and_set( "date" )) {
     }
 
 
-    # my $rights = $dataobj->get_value( "copyright_holders" );
-    # if ($dataobj->exists_and_set( "copyright_holders" )) {
-    #   my $rights = $dataobj->get_value( "copyright_holders" );
-    # foreach my $right ( @$rights )
-    # {
-    # $author->appendChild( $xml->create_data_element("contributor", $right, contributorType=>"RightsHolder" ) );
-    # # $author->appendChild( $xml->create_data_element("affillation", $name_str) );
-    # }
-    # }
+
     $contributors->appendChild( $author );
       }
 
     $entry->appendChild( $contributors );
   }
 
-		# my $thisresourceType = $repo->get_conf( "datacitedoi", "typemap", $dataobj->get_value("type") );
-		# if(defined $thisresourceType ){
-		# 	$entry->appendChild( $xml->create_data_element( "resourceType", $thisresourceType->{'v'},  resourceTypeGeneral=>$thisresourceType->{'a'}) );
-		# }
-
-    # my $type = $dataobj->get_value( "data_type" );
-        # if ($dataobj->exists_and_set( "data_type" )) {
-        #   my $type = $dataobj->get_value( "data_type" );
-        # $entry->appendChild(  $xml->create_data_element( "resourceType", $type, resourceTypeGeneral=>"Software") );
-        #
-        # }
 
 
 
@@ -206,6 +182,7 @@ if ($dataobj->exists_and_set( "date" )) {
 
 
 
+  #BF this is a can call which checks and calls for a sub inside the z_datacitedoi called funderrr
       if( $repo->can_call( "funderrr" ) )
       {
         if( defined( $repo->call( "funderrr", $xml, $entry, $dataobj ) ) )
@@ -219,14 +196,13 @@ if ($dataobj->exists_and_set( "date" )) {
             my $thefunders = $xml->create_element( "funders" );
             foreach my $funder ( @$funders )
             {
-              #  my $fun = $funder->{funders};
+
 
               foreach my $project ( @$projects )
               {
             $thefunders->appendChild(  $xml->create_data_element( "funderName", $funder) );
             $thefunders->appendChild(  $xml->create_data_element( "awardNumber", $grant) );
-            # $thefunders->appendChild(  $xml->create_data_element( "awardTitle", $project) );
-            # print STDERR Dumper $funder;
+
           }
         }
             $entry->appendChild( $thefunders );
@@ -235,26 +211,19 @@ if ($dataobj->exists_and_set( "date" )) {
         }
 
 
-      # my $alternateIdentifiers = $xml->create_element( "alternateIdentifiers" );
-      # $alternateIdentifiers->appendChild(  $xml->create_data_element( "alternateIdentifier",  $dataobj->get_url() , alternateIdentifierType=>"URL" ) );
-      # $entry->appendChild( $alternateIdentifiers );
-      #
-      #
 
-      if ($dataobj->exists_and_set( "repo_link" )) {
-      # my $relatedResources = $dataobj->get_value( "related_resources_url" );
-      # foreach my $relatedResource ( @$relatedResources )
-      # {
 
-      my $relatedIdentifiers = $xml->create_element( "relatedIdentifiers" );
-      $relatedIdentifiers->appendChild(  $xml->create_data_element( "relatedIdentifier",  $dataobj->get_url() , relatedIdentifierType=>"URL", relationType=>"IsReferencedBy" ) );
-      # $relatedIdentifiers->appendChild( $xml->create_data_element("relatedIdentifier", ));
-      # $relatedIdentifiers->appendChild(  $xml->create_data_element("relatedIdentifier", $relatedResource, relatedIdentifierType=>"DOI", relationType=>"IsReferencedBy"));
-      $entry->appendChild( $relatedIdentifiers );
+        if ($dataobj->exists_and_set( "repo_link" )) {
+        my $theurls = $dataobj->get_value( "repo_link" );
+        foreach my $theurl ( @$theurls )
+        {
+        my $linkk = $theurl->{link};
+        my $relatedIdentifiers = $xml->create_element( "relatedIdentifiers" );
+        $relatedIdentifiers->appendChild(  $xml->create_data_element( "relatedIdentifier", $linkk, relatedIdentifierType=>"URL", relationType=>"IsReferencedBy" ) );
+        $entry->appendChild( $relatedIdentifiers );
+      }
     }
-  # }
 
-      # my $abstract = $dataobj->get_value( "abstract" );
           if ($dataobj->exists_and_set( "abstract" )) {
             my $abstract = $dataobj->get_value( "abstract" );
             my $discription = $xml->create_element( "descriptions" );
@@ -264,11 +233,7 @@ if ($dataobj->exists_and_set( "date" )) {
             $discription->appendChild(  $xml->create_data_element( "description", $abstract, "xml:lang"=>"en-us", descriptionType=>"Abstract" ) );
 
 
-            # if ($dataobj->exists_and_set( "legal_ethical" )) {
-            #    my $legal = $dataobj->get_value( "legal_ethical" );
-            #
-            # $discription->appendChild(  $xml->create_data_element( "description", $legal, descriptionType=>"other" ) );
-            # }
+
             if ($dataobj->exists_and_set( "collection_method" )) {
             my $collection = $dataobj->get_value("collection_method");
             $discription->appendChild( $xml->create_data_element("discrpition", $collection, descriptionType=>"Methods"));
@@ -281,13 +246,13 @@ if ($dataobj->exists_and_set( "date" )) {
             $entry->appendChild( $discription );
           }
 
-
+          #BF this is a can call which checks and calls for a sub inside the z_datacitedoi called laaanguages
           if( $repo->can_call( "laaanguages" ) )
           {
             if( defined( $repo->call( "laaanguages", $xml, $entry, $dataobj ) ) )
                                    {}
                                      else {
-                      # my $lan = $dataobj->get_value( "language" );
+
                   		  if ($dataobj->exists_and_set( "language" )) {
                           my $lan = $dataobj->get_value( "language" );
                   	 $entry->appendChild( $xml->create_data_element( "language", $lan) );
@@ -296,22 +261,13 @@ if ($dataobj->exists_and_set( "date" )) {
                   }
 
 
-          # # my ( $xml, $entry, $dataobj ) = @_;
-          # #
-          # 	my $lan = $dataobj->get_value( "language" );
-          # 		if ($dataobj->exists_and_set( "language" )) {
-          # 			foreach my $la ( @$lan )
-          # 			{
-          # 				my $thelanguage = $la->{l};
-          #  $entry->appendChild( $xml->create_data_element( "language", $thelanguage) );
-          # 	}
-          # }
+
 
 
         if( $dataobj->exists_and_set( "geographic_cover" ) )
               {
                 my $geo = $xml->create_element( "geoLocations" );
-                # my $geo = $xml->create_element( "geoLocations" );
+
           my $names = $dataobj->get_value( "geographic_cover" );
 
 
@@ -319,21 +275,16 @@ if ($dataobj->exists_and_set( "date" )) {
             my $author = $xml->create_element( "geoLocation" );
             my $bbox = $dataobj->get_value( "bounding_box" );
             print STDERR Dumper $bbox;
-            # my $name_str = EPrints::Utils::make_name_string( $name->{name});
-            # my $family = EPrints::Utils::make_family_name_string( $name->{family}->{name});
-            # my $orcid = $name->get_value("orcid");
-            # my $orcid = $name->{orcid};
-            #
-            # my $north = $bbox->{north}->{edge};
+
             my $west = $dataobj->get_value( "bounding_box_west_edge" );
             my $east = $dataobj->get_value( "bounding_box_east_edge" );
             my $south = $dataobj->get_value( "bounding_box_south_edge" );
             my $north = $dataobj->get_value( "bounding_box_north_edge" );
-            # my $given = $name->{name}->{given};
+
             $author->appendChild( $xml->create_data_element("geoLocationPlace", $names ) );
-            # $author->appendChild( $xml->create_data_element("geoLocationPoint" ) );
+
               my $bobox = $xml->create_element( "geoLocationBox" );
-              #line below is not finished make sure to take a look back at it
+
 
 
 
@@ -345,10 +296,7 @@ if ($dataobj->exists_and_set( "date" )) {
             print STDERR Dumper $north;
 
 
-            #       $author->appendChild( $xml->create_data_element("givenName",$given ) );
-            #       $author->appendChild( $xml->create_data_element("familyName", $family ) );
-            # $author->appendChild( $xml->create_data_element("nameIdentifier", $orcid, schemeURI=>"http://orcid.org/", nameIdentifierScheme=>"ORCID" ) );
-            # $author->appendChild( $xml->create_data_element("affillation", $name_str) );
+
             $author->appendChild( $bobox);
 
 
@@ -359,9 +307,7 @@ if ($dataobj->exists_and_set( "date" )) {
 }
 
 
-		# my $relatedIdentifiers = $xml->create_element( "alternateIdentifiers" );
-		# $alternateIdentifiers->appendChild(  $xml->create_data_element( "alternateIdentifier",  $dataobj->get_url() , alternateIdentifierType=>"URL" ) );
-		# $entry->appendChild( $alternateIdentifiers );
+
 
 
 		#TODO Seek, identify and include for registration the optional datacite fields

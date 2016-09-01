@@ -119,51 +119,52 @@ if($c->{datacitedoi}{action_coin}){
 
 
 
-
+#BF sub method for can call for funder
 $c->{funderrr} = sub
  {
 
 my ( $xml, $entry, $dataobj ) = @_;
-
 my $funders = $dataobj->get_value( "funders" );
-# my $grant = $dataobj->get_value( "grant" );
+
 my $projects = $dataobj->get_value( "projects" );
   if ($dataobj->exists_and_set( "funders" )) {
     my $thefunders = $xml->create_element( "funders" );
-    foreach my $funder ( @$funders )
-    {
+
+	  foreach my $funder ( @$funders )
+  {
       my $fund = $funder->{funders};
       my $grant = $funder->{grant};
+			my $others = $dataobj->get_value( "funders_other_funder" );
 
-
-      my $other = $funder->{other}->{funder};
+			foreach my $other ( @$others )
+      {
 
       foreach my $project ( @$projects )
       {
 
         my $proj = $project->{name};
 
+				if ($fund eq "other" ) {
 
-    # $thefunders->appendChild(  $xml->create_data_element( "funderName", $other) );
+    $thefunders->appendChild(  $xml->create_data_element( "funderName", $other) );
+	} else {
+
     $thefunders->appendChild(  $xml->create_data_element( "funderName", $fund) );
-    $thefunders->appendChild(  $xml->create_data_element( "awardNumber", $grant) );
-    # $thefunders->appendChild(  $xml->create_data_element( "awardTitle", $proj) );
 }
-    # print STDERR Dumper $funder;
-
+	  $thefunders->appendChild(  $xml->create_data_element( "awardNumber", $grant) );
+    }
+	}
 }
-
-    $entry->appendChild( $thefunders );
-
+  $entry->appendChild( $thefunders );
 }
 };
 
 
-
+#BF sub method for can call for language
 $c->{laaanguages} = sub
  {
 	 my ( $xml, $entry, $dataobj ) = @_;
- #
+ 
  	my $lan = $dataobj->get_value( "language" );
  		if ($dataobj->exists_and_set( "language" )) {
  			foreach my $la ( @$lan )
@@ -173,19 +174,3 @@ $c->{laaanguages} = sub
  	}
  }
  }
-
-# $c->{laaanguages} = sub
-# {
-#
-# my ( $xml, $entry, $dataobj ) = @_;
-#
-# 	my $lan = $dataobj->get_value( "language" );
-# 		if ($dataobj->exists_and_set( "language" )) {
-# 			foreach my $la ( @$lan )
-# 			{
-# 				my $thelanguage = $la->{l};
-#  $entry->appendChild( $xml->create_data_element( "language", $thelanguage) );
-# 	}
-# }
-#
-# }
