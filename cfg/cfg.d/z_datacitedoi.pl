@@ -5,6 +5,9 @@ $c->{plugins}{"Event::DataCiteEvent"}{params}{disable} = 0;
 #which field do use for the doi
 $c->{datacitedoi}{eprintdoifield} = "id_number";
 
+#which DataCiteXML schema version to use
+$c->{datacitedoi}{schemaversion} = "3.1"; #change this when 4.0 is released
+
 #When should you register/update doi info.
 $c->{datacitedoi}{eprintstatus} = {inbox=>0,buffer=>1,archive=>1,deletion=>0};
 
