@@ -5,8 +5,7 @@ $c->{plugins}{"Event::DataCiteEvent"}{params}{disable} = 0;
 #which field do use for the doi
 $c->{datacitedoi}{eprintdoifield} = "id_number";
 
-#which DataCiteXML schema version to use
-$c->{datacitedoi}{schemaversion} = "3.1"; #change this when 4.0 is released
+
 
 #When should you register/update doi info.
 $c->{datacitedoi}{eprintstatus} = {inbox=>0,buffer=>1,archive=>1,deletion=>0};
@@ -29,8 +28,8 @@ $c->{datacitedoi}{publisher} = "Eprints Repo";
 
 # Namespace and location for datacite XML schema
 # feel free to update, though no guarantees it'll be accepted if you do
-$c->{datacitedoi}{xmlns} = "http://datacite.org/schema/kernel-2.2";
-$c->{datacitedoi}{schemaLocation} = $c->{datacitedoi}{xmlns}." http://schema.datacite.org/meta/kernel-2.2/metadata.xsd";
+$c->{datacitedoi}{xmlns} = "http://datacite.org/schema/kernel-4.0";
+$c->{datacitedoi}{schemaLocation} = $c->{datacitedoi}{xmlns}." http://schema.datacite.org/meta/kernel-4.0/metadata.xsd";
 
 # need to map eprint type (article, dataset etc) to ResourceType
 # Controled list http://schema.datacite.org/meta/kernel-2.2/doc/DataCite-MetadataKernel_v2.2.pdf
