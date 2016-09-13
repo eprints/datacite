@@ -81,23 +81,34 @@ sub output_dataobj
         my $family = $name->{name}->{family};
         my $given = $name->{name}->{given};
         my $orcid = $name->{orcid};
-        $author->appendChild( $xml->create_data_element(
-              "creatorName",
-              $name_str ) );
-              $author->appendChild( $xml->create_data_element("givenName",$given ) );
-              $author->appendChild( $xml->create_data_element("familyName", $family ) );
 
-                if ($dataobj->exists_and_set( "creators_orcid" )) {
-                  print STDERR Dumper $orcid;
-        $author->appendChild( $xml->create_data_element("nameIdentifier", $orcid, schemeURI=>"http://orcid.org/", nameIdentifierScheme=>"ORCID" ) );
-
-}
-
-        $creators->appendChild( $author );
-      }
-
-    $entry->appendChild( $creators );
-  }
+        if ($family eq '' && $given eq ''){
+              $creators->appendChild( $author );
+          } else {
+            $author->appendChild( $xml->create_data_element("creatorName", $name_str ) );
+          }
+        if ($given eq ''){
+                    $creators->appendChild( $author );
+          } else {
+            $author->appendChild( $xml->create_data_element("givenName",$given ) );
+          }
+        if ($family eq ''){
+            $creators->appendChild( $author );
+          } else {
+            $author->appendChild( $xml->create_data_element("familyName", $family ) );
+          }
+        if ($dataobj->exists_and_set( "creators_orcid" )) {
+        if ($orcid eq '') {
+            $creators->appendChild( $author );
+          }
+            else {
+          $author->appendChild( $xml->create_data_element("nameIdentifier", $orcid, schemeURI=>"http://orcid.org/", nameIdentifierScheme=>"ORCID" ) );
+          }
+        }
+          $creators->appendChild( $author );
+          }
+          $entry->appendChild( $creators );
+        }
 
 
     if ($dataobj->exists_and_set( "title" )) {
@@ -146,30 +157,38 @@ if ($dataobj->exists_and_set( "date" )) {
         my $family = $name->{name}->{family};
         my $given = $name->{name}->{given};
 
-        $author->appendChild( $xml->create_data_element("contributorName", $name_str ) );
-        $author->appendChild( $xml->create_data_element("givenName",$given ) );
-        $author->appendChild( $xml->create_data_element("familyName", $family ) );
-
-
-
+        if ($family eq '' && $given eq ''){
+            $contributors->appendChild( $author );
+          } else {
+            $author->appendChild( $xml->create_data_element("contributorName", $name_str ) );
+          }
+        if ($given eq '') {
+            $contributors->appendChild( $author );
+          } else {
+            $author->appendChild( $xml->create_data_element("givenName",$given ) );
+          }
+        if ($family eq ''){
+            $contributors->appendChild( $author );
+          } else {
+            $author->appendChild( $xml->create_data_element("familyName", $family ) );
+          }
 
         if ($dataobj->exists_and_set( "contributors_orcid" )) {
-      my $orcid = $name->{orcid};
-    $author->appendChild( $xml->create_data_element("nameIdentifier", $orcid, schemeURI=>"http://orcid.org/", nameIdentifierScheme=>"ORCID" ) );
-
-    }
-    if ($dataobj->exists_and_set( "creator_affiliation" )) {
-    my $affiliation = $dataobj->get_value("creator_affiliation");
-    $author->appendChild( $xml->create_data_element("affillation", $affiliation) );
-    }
-
-
-
-    $contributors->appendChild( $author );
-      }
-
-    $entry->appendChild( $contributors );
-  }
+            my $orcid = $name->{orcid};
+        if ($orcid eq '') {
+            $contributors->appendChild( $author );
+          } else {
+            $author->appendChild( $xml->create_data_element("nameIdentifier", $orcid, schemeURI=>"http://orcid.org/", nameIdentifierScheme=>"ORCID" ) );
+          }
+        }
+      if ($dataobj->exists_and_set( "contributors_affiliation" )) {
+            my $affiliation = $dataobj->get_value("contributors_affiliation");
+            $author->appendChild( $xml->create_data_element("affillation", $affiliation) );
+          }
+            $contributors->appendChild( $author );
+          }
+            $entry->appendChild( $contributors );
+          }
 
 
 
@@ -183,9 +202,9 @@ if ($dataobj->exists_and_set( "date" )) {
 
 
   #BF this is a can call which checks and calls for a sub inside the z_datacitedoi called funderrr
-      if( $repo->can_call( "funderrr" ) )
+      if( $repo->can_call( "datacite_custom_funder" ) )
       {
-        if( defined( $repo->call( "funderrr", $xml, $entry, $dataobj ) ) )
+        if( defined( $repo->call( "datacite_custom_funder", $xml, $entry, $dataobj ) ) )
                                {}
                                  else {
 
@@ -214,15 +233,18 @@ if ($dataobj->exists_and_set( "date" )) {
 
 
         if ($dataobj->exists_and_set( "repo_link" )) {
-        my $theurls = $dataobj->get_value( "repo_link" );
+            my $theurls = $dataobj->get_value( "repo_link" );
+            my $relatedIdentifiers = $xml->create_element( "relatedIdentifiers" );
         foreach my $theurl ( @$theurls )
-        {
-        my $linkk = $theurl->{link};
-        my $relatedIdentifiers = $xml->create_element( "relatedIdentifiers" );
-        $relatedIdentifiers->appendChild(  $xml->create_data_element( "relatedIdentifier", $linkk, relatedIdentifierType=>"URL", relationType=>"IsReferencedBy" ) );
-        $entry->appendChild( $relatedIdentifiers );
-      }
-    }
+          {
+            my $linkk = $theurl->{link};
+        if (!$linkk eq ''){
+                $relatedIdentifiers->appendChild(  $xml->create_data_element( "relatedIdentifier", $linkk, relatedIdentifierType=>"URL", relationType=>"IsReferencedBy" ) );
+          }
+                $entry->appendChild( $relatedIdentifiers );
+          }
+        }
+
 
           if ($dataobj->exists_and_set( "abstract" )) {
             my $abstract = $dataobj->get_value( "abstract" );
@@ -247,9 +269,9 @@ if ($dataobj->exists_and_set( "date" )) {
           }
 
           #BF this is a can call which checks and calls for a sub inside the z_datacitedoi called laaanguages
-          if( $repo->can_call( "laaanguages" ) )
+          if( $repo->can_call( "datacite_custom_language" ) )
           {
-            if( defined( $repo->call( "laaanguages", $xml, $entry, $dataobj ) ) )
+            if( defined( $repo->call( "datacite_custom_language", $xml, $entry, $dataobj ) ) )
                                    {}
                                      else {
 
@@ -274,7 +296,7 @@ if ($dataobj->exists_and_set( "date" )) {
 
             my $author = $xml->create_element( "geoLocation" );
             my $bbox = $dataobj->get_value( "bounding_box" );
-            print STDERR Dumper $bbox;
+
 
             my $west = $dataobj->get_value( "bounding_box_west_edge" );
             my $east = $dataobj->get_value( "bounding_box_east_edge" );
@@ -293,7 +315,7 @@ if ($dataobj->exists_and_set( "date" )) {
              $bobox->appendChild(  $xml->create_data_element( "westBoundLongitude", $east) );
              $bobox->appendChild(  $xml->create_data_element( "westBoundLongitude", $south) );
              $bobox->appendChild(  $xml->create_data_element( "westBoundLongitude", $north) );
-            print STDERR Dumper $north;
+
 
 
 

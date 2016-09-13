@@ -5,8 +5,6 @@ $c->{plugins}{"Event::DataCiteEvent"}{params}{disable} = 0;
 #which field do use for the doi
 $c->{datacitedoi}{eprintdoifield} = "id_number";
 
-
-
 #When should you register/update doi info.
 $c->{datacitedoi}{eprintstatus} = {inbox=>0,buffer=>1,archive=>1,deletion=>0};
 
@@ -122,51 +120,42 @@ if($c->{datacitedoi}{action_coin}){
 
 
 #BF sub method for can call for funder
-$c->{funderrr} = sub
+$c->{datacite_custom_funder} = sub
  {
 
-my ( $xml, $entry, $dataobj ) = @_;
-my $funders = $dataobj->get_value( "funders" );
+	 my ( $xml, $entry, $dataobj ) = @_;
 
-my $projects = $dataobj->get_value( "projects" );
-  if ($dataobj->exists_and_set( "funders" )) {
-    my $thefunders = $xml->create_element( "funders" );
+	   if ($dataobj->exists_and_set( "funders" )) {
+	 		my $funders = $dataobj->get_value( "funders" );
+	   my $thefunders = $xml->create_element( "funders" );
+		 foreach my $funder ( @$funders )
+	   {
+	       my $fund = $funder->{funders};
+	       my $grant = $funder->{grant};
+	 			my $others = $dataobj->get_value( "funders_other_funder" );
+				if($fund eq "other"){
+	 			foreach my $other ( @$others )
+	       {
 
-	  foreach my $funder ( @$funders )
-  {
-      my $fund = $funder->{funders};
-      my $grant = $funder->{grant};
-			my $others = $dataobj->get_value( "funders_other_funder" );
+	 				$thefunders->appendChild(  $xml->create_data_element( "funderName", $other) );
+	 			}} else {
+	 					$thefunders->appendChild(  $xml->create_data_element( "funderName", $fund) );
+	 }
 
-			foreach my $other ( @$others )
-      {
+$thefunders->appendChild(  $xml->create_data_element( "awardNumber", $grant) );
 
-      foreach my $project ( @$projects )
-      {
 
-        my $proj = $project->{name};
-
-				if ($fund eq "other" ) {
-
-    $thefunders->appendChild(  $xml->create_data_element( "funderName", $other) );
-	} else {
-
-    $thefunders->appendChild(  $xml->create_data_element( "funderName", $fund) );
-}
-	  $thefunders->appendChild(  $xml->create_data_element( "awardNumber", $grant) );
-    }
-	}
-}
-  $entry->appendChild( $thefunders );
-}
-};
+	 }
+	   $entry->appendChild( $thefunders );
+	 }
+	 };
 
 
 #BF sub method for can call for language
-$c->{laaanguages} = sub
+$c->{datacite_custom_language} = sub
  {
 	 my ( $xml, $entry, $dataobj ) = @_;
- 
+
  	my $lan = $dataobj->get_value( "language" );
  		if ($dataobj->exists_and_set( "language" )) {
  			foreach my $la ( @$lan )
