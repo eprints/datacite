@@ -126,17 +126,26 @@ if ($dataobj->exists_and_set( "date" )) {
 
 }
 
-
-
+    # AH 03/11/2016: mapping the data in the EPrints keywords field to a <subjects> tag.
+    # If the keywords field is a multiple - and therefore, an array ref - then
+    # iterate through array and make each array element its own <subject> element.
+    # Otherwise, if the keywords field is a single block of text, take the string
+    # and make it a single <subject> element
     if ($dataobj->exists_and_set( "keywords" )) {
-      my $sub = $dataobj->get_value( "keywords" );
       my $subjects = $xml->create_element( "subjects" );
-
-      $subjects->appendChild(  $xml->create_data_element( "subject", $sub, "xml:lang"=>"en-us") );
-      $entry->appendChild( $subjects );
+      my $keywords = $dataobj->get_value("keywords");
+      if(ref($keywords) eq 'ARRAY') {
+        foreach my $keyword ( @$keywords ) {
+          my $subject = $xml->create_element( "subject" );
+          $subject->appendChild(  $xml->create_data_element( "subject", $keyword, "xml:lang"=>"en-us") );
+          $subjects->appendChild( $subject );
+        }
+        $entry->appendChild( $subjects );
+      } else {
+        $subjects->appendChild(  $xml->create_data_element( "subject", $keywords, "xml:lang"=>"en-us") );
+        $entry->appendChild( $subjects );
+      }
     }
-
-
 
     if( $dataobj->exists_and_set( "contributors" ) )
           {
