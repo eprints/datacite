@@ -134,7 +134,7 @@ if ($dataobj->exists_and_set( "date" )) {
     if ($dataobj->exists_and_set( "keywords" )) {
       my $subjects = $xml->create_element( "subjects" );
       my $keywords = $dataobj->get_value("keywords");
-      if(ref($keywords) eq 'ARRAY') {
+      if(ref($keywords) eq "ARRAY") {
         foreach my $keyword ( @$keywords ) {
           my $subject = $xml->create_element( "subject" );
           $subject->appendChild(  $xml->create_data_element( "subject", $keyword, "xml:lang"=>"en-us") );
