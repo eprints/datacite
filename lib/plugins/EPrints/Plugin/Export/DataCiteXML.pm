@@ -59,7 +59,19 @@ sub output_dataobj
 			return $thisdoi if($thisdoi !~ /^$prefix/);
 		}
 
-	   	$entry->appendChild( $xml->create_data_element( "identifier", $thisdoi , identifierType=>"DOI" ) );
+	  $entry->appendChild( $xml->create_data_element( "identifier", $thisdoi , identifierType=>"DOI" ) );
+
+    # AH 04/11/2016: adding <resourceType> element as it is required for the
+    # DataCite 4.0 XML Metadata Schema. For publications repositories, it uses the
+    # eprint_type value. For data repositories, it uses the eprint_data_type value.
+    my $pub_resourceType = $repo->get_conf( "datacitedoi", "typemap", $dataobj->get_value("type") );
+    if(defined $pub_resourceType){
+      $entry->appendChild( $xml->create_data_element( "resourceType", $pub_resourceType->{'v'}, resourceTypeGeneral=>$pub_resourceType->{'a'}) );
+    }
+    my $data_resourceType = $repo->get_conf( "datacitedoi", "typemap", $dataobj->get_value("data_type") );
+    if(defined $data_resourceType){
+      $entry->appendChild( $xml->create_data_element( "resourceType", $data_resourceType->{'v'}, resourceTypeGeneral=>$data_resourceType->{'a'}) );
+    }
 
 		#RM otherwise we'll leave this alone for now
 
