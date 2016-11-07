@@ -64,14 +64,16 @@ sub output_dataobj
     # AH 04/11/2016: adding <resourceType> element as it is required for the
     # DataCite 4.0 XML Metadata Schema. For publications repositories, it uses the
     # eprint_type value. For data repositories, it uses the eprint_data_type value.
+    my $resourceType_element;
     my $pub_resourceType = $repo->get_conf( "datacitedoi", "typemap", $dataobj->get_value("type") );
     if(defined $pub_resourceType){
-      $entry->appendChild( $xml->create_data_element( "resourceType", $pub_resourceType->{'v'}, resourceTypeGeneral=>$pub_resourceType->{'a'}) );
+       $resourceType_element = $xml->create_data_element( "resourceType", $pub_resourceType->{'v'}, resourceTypeGeneral=>$pub_resourceType->{'a'});
     }
-    my $data_resourceType = $repo->get_conf( "datacitedoi", "typemap", $dataobj->get_value("data_type") );
-    if(defined $data_resourceType){
-      $entry->appendChild( $xml->create_data_element( "resourceType", $data_resourceType->{'v'}, resourceTypeGeneral=>$data_resourceType->{'a'}) );
+    if( $dataobj->exists_and_set( "data_type" ) ) {
+      my $data_type = $dataobj->get_value( "data_type" );
+      $resourceType_element = $xml->create_data_element( "resourceType", $data_type, resourceTypeGeneral=>$data_type);
     }
+    $entry->appendChild( $resourceType_element );
 
 		#RM otherwise we'll leave this alone for now
 
@@ -148,9 +150,7 @@ if ($dataobj->exists_and_set( "date" )) {
       my $keywords = $dataobj->get_value("keywords");
       if(ref($keywords) eq "ARRAY") {
         foreach my $keyword ( @$keywords ) {
-          my $subject = $xml->create_element( "subject" );
-          $subject->appendChild(  $xml->create_data_element( "subject", $keyword, "xml:lang"=>"en-us") );
-          $subjects->appendChild( $subject );
+          $subjects->appendChild(  $xml->create_data_element( "subject", $keyword, "xml:lang"=>"en-us") );
         }
         $entry->appendChild( $subjects );
       } else {
