@@ -266,28 +266,26 @@ if ($dataobj->exists_and_set( "date" )) {
           }
         }
 
+        if ($dataobj->exists_and_set( "abstract" )) {
+          
+          my $abstract = $dataobj->get_value( "abstract" );
+          my $description = $xml->create_element( "descriptions" );
 
-          if ($dataobj->exists_and_set( "abstract" )) {
-            my $abstract = $dataobj->get_value( "abstract" );
-            my $discription = $xml->create_element( "descriptions" );
+          $description->appendChild(  $xml->create_data_element( "description", $abstract, "xml:lang"=>"en-us", descriptionType=>"Abstract" ) );
 
-
-
-            $discription->appendChild(  $xml->create_data_element( "description", $abstract, "xml:lang"=>"en-us", descriptionType=>"Abstract" ) );
-
-
-
-            if ($dataobj->exists_and_set( "collection_method" )) {
+          if ($dataobj->exists_and_set( "collection_method" )) {
             my $collection = $dataobj->get_value("collection_method");
-            $discription->appendChild( $xml->create_data_element("discrpition", $collection, descriptionType=>"Methods"));
+            $description->appendChild( $xml->create_data_element("description", $collection, descriptionType=>"Methods"));
           }
 
-            if ($dataobj->exists_and_set( "provenance" )) {
+          if ($dataobj->exists_and_set( "provenance" )) {
             my $processing = $dataobj->get_value("provenance");
-            $discription->appendChild( $xml->create_data_element("discrpition", $processing, descriptionType=>"Methods"));
+            $description->appendChild( $xml->create_data_element("description", $processing, descriptionType=>"Methods"));
           }
-            $entry->appendChild( $discription );
-          }
+
+          $entry->appendChild( $description );
+
+        }
 
           #BF this is a can call which checks and calls for a sub inside the z_datacitedoi called laaanguages
           if( $repo->can_call( "datacite_custom_language" ) )
