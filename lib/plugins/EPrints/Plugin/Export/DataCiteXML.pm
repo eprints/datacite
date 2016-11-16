@@ -267,7 +267,7 @@ if ($dataobj->exists_and_set( "date" )) {
         }
 
         if ($dataobj->exists_and_set( "abstract" )) {
-          
+
           my $abstract = $dataobj->get_value( "abstract" );
           my $description = $xml->create_element( "descriptions" );
 
@@ -301,58 +301,58 @@ if ($dataobj->exists_and_set( "date" )) {
                     }
                   }
 
+            # AH 16/11/2016: rendering the geoLocations XML elements
+            # Note: the initial conditional checks to see if the geographic_cover
+            # metadata field exists and is set. This was done because geographic_cover
+            # is part of the z_recollect_metadata_profile.pl file within the Recollect
+            # plugin and many repositories make it a mandatory field in the workflow.
 
+            if( $dataobj->exists_and_set( "geographic_cover" ) ) {
 
+              #Create XML elements
+              my $geo_locations = $xml->create_element( "geoLocations" );
+              my $geo_location = $xml->create_element( "geoLocation" );
 
+              # Get value of geographic_cover field and append to $geo_location XML element
+              my $geographic_cover = $dataobj->get_value( "geographic_cover" );
+              $geo_location->appendChild( $xml->create_data_element("geoLocationPlace", $geographic_cover ) );
 
-        if( $dataobj->exists_and_set( "geographic_cover" ) )
-              {
-                my $geo = $xml->create_element( "geoLocations" );
+              # Get values of bounding box
+              my $west = $dataobj->get_value( "bounding_box_west_edge" );
+              my $east = $dataobj->get_value( "bounding_box_east_edge" );
+              my $south = $dataobj->get_value( "bounding_box_south_edge" );
+              my $north = $dataobj->get_value( "bounding_box_north_edge" );
 
-          my $names = $dataobj->get_value( "geographic_cover" );
+              # Check to see if $north, $south, $east, or $west values are defined
+              if ($north || $south || $east || $west ) {
+                # Created $geo_location_box XML element
+                my $geo_location_box = $xml->create_element( "geoLocationBox" );
+                # If $west is defined, created XML element with the appropriate value
+                if ($west) {
+                  $geo_location_box->appendChild(  $xml->create_data_element( "westBoundLongitude", $west) );
+                }
+                # If $east is defined, created XML element with the appropriate value
+                if ($east) {
+                  $geo_location_box->appendChild(  $xml->create_data_element( "eastBoundLongitude", $east) );
+                }
+                # If $south is defined, created XML element with the appropriate value
+                if ($south) {
+                  $geo_location_box->appendChild(  $xml->create_data_element( "southBoundLongitude", $south) );
+                }
+                # If $north is defined, created XML element with the appropriate value
+                if ($north) {
+                  $geo_location_box->appendChild(  $xml->create_data_element( "northBoundLongitude", $north) );
+                }
+                # Append child $geo_location_box XML element to parent $geo_location XML element
+                $geo_location->appendChild( $geo_location_box );
+              }
+              # Append child $geo_location XML element to parent $geo_locations XML element
+              $geo_locations->appendChild( $geo_location );
+              # Append $geo_locations XML element to XML document
+              $entry->appendChild( $geo_locations );
+            }
 
-
-
-            my $author = $xml->create_element( "geoLocation" );
-            my $bbox = $dataobj->get_value( "bounding_box" );
-
-
-            my $west = $dataobj->get_value( "bounding_box_west_edge" );
-            my $east = $dataobj->get_value( "bounding_box_east_edge" );
-            my $south = $dataobj->get_value( "bounding_box_south_edge" );
-            my $north = $dataobj->get_value( "bounding_box_north_edge" );
-
-            $author->appendChild( $xml->create_data_element("geoLocationPlace", $names ) );
-
-              my $bobox = $xml->create_element( "geoLocationBox" );
-
-
-
-
-
-              $bobox->appendChild(  $xml->create_data_element( "westBoundLongitude", $west) );
-             $bobox->appendChild(  $xml->create_data_element( "westBoundLongitude", $east) );
-             $bobox->appendChild(  $xml->create_data_element( "westBoundLongitude", $south) );
-             $bobox->appendChild(  $xml->create_data_element( "westBoundLongitude", $north) );
-
-
-
-
-            $author->appendChild( $bobox);
-
-
-            $geo->appendChild( $author );
-
-
-        $entry->appendChild( $geo );
-}
-
-
-
-
-
-		#TODO Seek, identify and include for registration the optional datacite fields
-	       return '<?xml version="1.0" encoding="UTF-8"?>'."\n".$xml->to_string($entry);
+  	    return '<?xml version="1.0" encoding="UTF-8"?>'."\n".$xml->to_string($entry);
 }
 
 
