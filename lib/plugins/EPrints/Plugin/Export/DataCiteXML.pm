@@ -159,68 +159,67 @@ if ($dataobj->exists_and_set( "date" )) {
       }
     }
 
-    if( $dataobj->exists_and_set( "contributors" ) )
-          {
-            my $contributors = $xml->create_element( "contributors" );
+    # AH 16/12/2016: commenting out the creation of the <contributors> element. This is because the
+    # DataCite 4.0 Schema requires a contributorType attribute, which needs to be mapped. According to
+    # https://schema.datacite.org/meta/kernel-4.0/doc/DataCite-MetadataKernel_v4.0.pdf (page 16), there
+    # is a controlled list of contributorType options and it would be advisable to alter the
+    # Recollect workflow to make use of this controlled list (e.g. a namedset of approved values)
+    # and then map the values from this field to the XML found below.
+    # Note: if you do not supply a contributorType, the coin DOI process will fail
+    # because the contributorType attribute is mandatory. As such, and because the parent <contributor>
+    # element is not mandatory, it will be commented out and not sent to DataCite pending further work from ULCC.
 
-      my $names = $dataobj->get_value( "contributors" );
-      ;
-
-      foreach my $name ( @$names )
-      {
-        my $author = $xml->create_element( "contributor" );
-
-        my $name_str = EPrints::Utils::make_name_string( $name->{name});
-
-        my $orcid = $name->{orcid};
-
-        my $typee = $name->{type};
-        my $family = $name->{name}->{family};
-        my $given = $name->{name}->{given};
-
-        if ($family eq '' && $given eq ''){
-            $contributors->appendChild( $author );
-          } else {
-            $author->appendChild( $xml->create_data_element("contributorName", $name_str ) );
-          }
-        if ($given eq '') {
-            $contributors->appendChild( $author );
-          } else {
-            $author->appendChild( $xml->create_data_element("givenName",$given ) );
-          }
-        if ($family eq ''){
-            $contributors->appendChild( $author );
-          } else {
-            $author->appendChild( $xml->create_data_element("familyName", $family ) );
-          }
-
-        if ($dataobj->exists_and_set( "contributors_orcid" )) {
-            my $orcid = $name->{orcid};
-        if ($orcid eq '') {
-            $contributors->appendChild( $author );
-          } else {
-            $author->appendChild( $xml->create_data_element("nameIdentifier", $orcid, schemeURI=>"http://orcid.org/", nameIdentifierScheme=>"ORCID" ) );
-          }
-        }
-      if ($dataobj->exists_and_set( "contributors_affiliation" )) {
-            my $affiliation = $dataobj->get_value("contributors_affiliation");
-            $author->appendChild( $xml->create_data_element("affillation", $affiliation) );
-          }
-            $contributors->appendChild( $author );
-          }
-            $entry->appendChild( $contributors );
-          }
-
-
-
-
-
-
-
-
-
-
-
+    # if( $dataobj->exists_and_set( "contributors" ) )
+    # {
+    #
+    #   my $contributors = $xml->create_element( "contributors" );
+    #
+    #   my $names = $dataobj->get_value( "contributors" );
+    #
+    #   foreach my $name ( @$names )
+    #   {
+    #     my $author = $xml->create_element( "contributor" );
+    #
+    #     my $name_str = EPrints::Utils::make_name_string( $name->{name});
+    #
+    #     my $orcid = $name->{orcid};
+    #
+    #     my $typee = $name->{type};
+    #     my $family = $name->{name}->{family};
+    #     my $given = $name->{name}->{given};
+    #
+    #     if ($family eq '' && $given eq ''){
+    #       $contributors->appendChild( $author );
+    #     } else {
+    #       $author->appendChild( $xml->create_data_element("contributorName", $name_str ) );
+    #     }
+    #     if ($given eq '') {
+    #       $contributors->appendChild( $author );
+    #     } else {
+    #       $author->appendChild( $xml->create_data_element("givenName",$given ) );
+    #     }
+    #     if ($family eq ''){
+    #       $contributors->appendChild( $author );
+    #     } else {
+    #       $author->appendChild( $xml->create_data_element("familyName", $family ) );
+    #     }
+    #
+    #     if ($dataobj->exists_and_set( "contributors_orcid" )) {
+    #       my $orcid = $name->{orcid};
+    #       if ($orcid eq '') {
+    #         $contributors->appendChild( $author );
+    #       } else {
+    #         $author->appendChild( $xml->create_data_element("nameIdentifier", $orcid, schemeURI=>"http://orcid.org/", nameIdentifierScheme=>"ORCID" ) );
+    #       }
+    #     }
+    #     if ($dataobj->exists_and_set( "contributors_affiliation" )) {
+    #       my $affiliation = $dataobj->get_value("contributors_affiliation");
+    #       $author->appendChild( $xml->create_data_element("affillation", $affiliation) );
+    #     }
+    #     $contributors->appendChild( $author );
+    #   }
+    #   $entry->appendChild( $contributors );
+    # }
 
   #BF this is a can call which checks and calls for a sub inside the z_datacitedoi called funderrr
       if( $repo->can_call( "datacite_custom_funder" ) )
