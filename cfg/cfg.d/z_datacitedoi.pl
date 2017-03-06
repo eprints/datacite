@@ -5,6 +5,9 @@ $c->{plugins}{"Event::DataCiteEvent"}{params}{disable} = 0;
 #which field do use for the doi
 $c->{datacitedoi}{eprintdoifield} = "id_number";
 
+#for xml:lang attributes in XML
+$c->{datacitedoi}{defaultlangtag} = "en-GB";
+
 #When should you register/update doi info.
 $c->{datacitedoi}{eprintstatus} = {inbox=>0,buffer=>1,archive=>1,deletion=>0};
 

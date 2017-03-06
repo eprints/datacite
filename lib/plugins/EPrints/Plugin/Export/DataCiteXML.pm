@@ -57,7 +57,7 @@ sub output_dataobj
 		}
 
 	  $entry->appendChild( $xml->create_data_element( "identifier", $thisdoi , identifierType=>"DOI" ) );
-
+    my $lang = $repo->get_conf("datacitedoi","defaultlangtag");
     # AH 04/11/2016: adding <resourceType> element as it is required for the
     # DataCite 4.0 XML Metadata Schema. For publications repositories, it uses the
     # eprint_type value. For data repositories, it uses the eprint_data_type value.
@@ -102,7 +102,7 @@ sub output_dataobj
 
     if ($dataobj->exists_and_set( "title" )) {
         my $titles = $xml->create_element( "titles" );
-		$titles->appendChild(  $xml->create_data_element( "title",  $dataobj->render_value( "title" ), "xml:lang"=>"en-us" ) );
+		$titles->appendChild(  $xml->create_data_element( "title",  $dataobj->render_value( "title" ), "xml:lang"=>$lang ) );
         $entry->appendChild( $titles );
 	}
     $entry->appendChild( $xml->create_data_element( "publisher", $repo->get_conf( "datacitedoi", "publisher") ) );
@@ -122,11 +122,11 @@ sub output_dataobj
         my $keywords = $dataobj->get_value("keywords");
         if(ref($keywords) eq "ARRAY") {
             foreach my $keyword ( @$keywords ) {
-                $subjects->appendChild(  $xml->create_data_element( "subject", $keyword, "xml:lang"=>"en-us") );
+                $subjects->appendChild(  $xml->create_data_element( "subject", $keyword, "xml:lang"=>$lang) );
             }
             $entry->appendChild( $subjects );
         } else {
-            $subjects->appendChild(  $xml->create_data_element( "subject", $keywords, "xml:lang"=>"en-us") );
+            $subjects->appendChild(  $xml->create_data_element( "subject", $keywords, "xml:lang"=>$lang) );
             $entry->appendChild( $subjects );
         }
     }
@@ -230,7 +230,7 @@ sub output_dataobj
         my $abstract = $dataobj->get_value( "abstract" );
         my $description = $xml->create_element( "descriptions" );
 
-        $description->appendChild(  $xml->create_data_element( "description", $abstract, "xml:lang"=>"en-us", descriptionType=>"Abstract" ) );
+        $description->appendChild(  $xml->create_data_element( "description", $abstract, "xml:lang"=>$lang, descriptionType=>"Abstract" ) );
 
         if ($dataobj->exists_and_set( "collection_method" )) {
             my $collection = $dataobj->get_value("collection_method");
@@ -305,7 +305,7 @@ sub output_dataobj
         $entry->appendChild( $geo_locations );
     }
 
-    return '<?xml version="1.0" encoding="UTF-8"?>'."\n".$xml->to_string($entry);
+    return '<?xml version="1.0" encoding="UTF-8"?>'."\n".EPrints::XML::to_string($entry);
 }
 
 1;
