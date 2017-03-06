@@ -57,7 +57,7 @@ sub datacite_doi
 			$repo_url.= $dataobj->internal_uri;
 		}
  		my $doi_reg = "doi=$thisdoi\nurl=".$repo_url;
-		($response_content, $response_code)= datacite_request("POST", $url."doi", $user_name, $user_pw, $doi_reg, "text/plain;charset=UTF-8");
+		($response_content, $response_code)= datacite_request("POST", $url."doi", $user_name, $user_pw, $doi_reg, "text/plain; charset=utf8");
 		if($response_code  !~ /20(1|0)/){
 			$repository->log("Registration response from datacite api: $response_code: $response_content");
 			$repository->log("BTW the \$doi_reg was:\n$doi_reg");
@@ -81,9 +81,10 @@ sub datacite_request {
     'Accept'  => 'application/xml',
     'Content-Type' => $content_type
   );
+  
   my $req = HTTP::Request->new(
     $method => $url,
-    $headers, $content
+    $headers, Encode::encode_utf8( $content )
   );
   $req->authorization_basic($user_name, $user_pw);
 
