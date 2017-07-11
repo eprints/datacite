@@ -29,37 +29,37 @@ sub new
 
 sub output_dataobj
 {
-        my ($self, $dataobj, %opts) = @_;
+    my ($self, $dataobj, %opts) = @_;
+    
+    my $repo = $self->{repository};
+    my $xml = $repo->xml;
 
-                my $repo = $self->{repository};
-                my $xml = $repo->xml;
+    #reference the datacite schema from config
+    our $entry = $xml->create_element( "resource",
+                    xmlns=> $repo->get_conf( "datacitedoi", "xmlns"),
+                    "xmlns:xsi"=>"http://www.w3.org/2001/XMLSchema-instance",
+                    "xsi:schemaLocation" => $repo->get_conf( "datacitedoi", "schemaLocation"));
 
-                #reference the datacite schema from config
-        our $entry = $xml->create_element( "resource",
-                        xmlns=> $repo->get_conf( "datacitedoi", "xmlns"),
-                        "xmlns:xsi"=>"http://www.w3.org/2001/XMLSchema-instance",
-                        "xsi:schemaLocation" => $repo->get_conf( "datacitedoi", "schemaLocation"));
+    #RM We pass in the DOI from Event::DataCite... or from --args on the cmd line
 
-                #RM We pass in the DOI from Event::DataCite... or from --args on the cmd line
-
-# AH my $thisdoi = $opts{doi}; always returns undefined, even when DOI exists
+    # AH my $thisdoi = $opts{doi}; always returns undefined, even when DOI exists
     # Ideally coining should NOT happen in this script but opts{doi} should have it
     # but is always blank
-                my $thisdoi = $dataobj->get_value("id_number");
-                #RM coin a DOI if either
-                        # - not come via event or
-                        # - no doi arg passed in via cmd_line
-                # ie when someone exports DataCiteXML from the Action tab
-                if(!defined $thisdoi){
-                        #nick the coining sub from event plugin
-                        my $event = $repo->plugin("Event::DataCiteEvent");
-                        $thisdoi = $event->coin_doi($repo, $dataobj);
-                        #coin_doi may return an event error code if no prefix present assume this is the case
-                        my $prefix = $repo->get_conf( "datacitedoi", "prefix");
-                        return $thisdoi if($thisdoi !~ /^$prefix/);
-                }
+    my $thisdoi = $dataobj->get_value("id_number");
+    #RM coin a DOI if either
+            # - not come via event or
+            # - no doi arg passed in via cmd_line
+    # ie when someone exports DataCiteXML from the Action tab
+    if(!defined $thisdoi){
+            #nick the coining sub from event plugin
+            my $event = $repo->plugin("Event::DataCiteEvent");
+            $thisdoi = $event->coin_doi($repo, $dataobj);
+            #coin_doi may return an event error code if no prefix present assume this is the case
+            my $prefix = $repo->get_conf( "datacitedoi", "prefix");
+            return $thisdoi if($thisdoi !~ /^$prefix/);
+    }
 
-          $entry->appendChild( $xml->create_data_element( "identifier", $thisdoi , identifierType=>"DOI" ) );
+    $entry->appendChild( $xml->create_data_element( "identifier", $thisdoi , identifierType=>"DOI" ) );
 
     # AH 04/11/2016: adding <resourceType> element as it is required for the
     # DataCite 4.0 XML Metadata Schema. For publications repositories, it uses the
@@ -75,82 +75,72 @@ sub output_dataobj
     }
     $entry->appendChild( $resourceType_element );
 
-                #RM otherwise we'll leave this alone for now
+    #RM otherwise we'll leave this alone for now
+
+    my $license = undef;
 
 
-  my $license = undef;
-
-
-    if( $repo->can_call( "datacite_license" ) )
-    {
+    if( $repo->can_call( "datacite_license" ) ){
             $license = $repo->call( "datacite_license", $xml, $entry, $dataobj, $repo );
+    }
 
-              }
+    if( $dataobj->exists_and_set( "creators" ) ){
+        my $creators = $xml->create_element( "creators" );
+        my $names = $dataobj->get_value( "creators" );
 
+        foreach my $name ( @$names ){
+            my $author = $xml->create_element( "creator" );
 
-
-if( $dataobj->exists_and_set( "creators" ) )
-          {
-              my $creators = $xml->create_element( "creators" );
-      my $names = $dataobj->get_value( "creators" );
-      ;
-
-      foreach my $name ( @$names )
-      {
-        my $author = $xml->create_element( "creator" );
-
-        my $name_str = EPrints::Utils::make_name_string( $name->{name});
+            my $name_str = EPrints::Utils::make_name_string( $name->{name});
 
 
 
-        my $family = $name->{name}->{family};
-        my $given = $name->{name}->{given};
-        my $orcid = $name->{orcid};
+            my $family = $name->{name}->{family};
+            my $given = $name->{name}->{given};
+            my $orcid = $name->{orcid};
 
-        if ($family eq '' && $given eq ''){
-              $creators->appendChild( $author );
-          } else {
-            $author->appendChild( $xml->create_data_element("creatorName", $name_str ) );
-          }
-        if ($given eq ''){
+            if ($family eq '' && $given eq ''){
+                  $creators->appendChild( $author );
+            } else {
+                $author->appendChild( $xml->create_data_element("creatorName", $name_str ) );
+            }
+            if ($given eq ''){
+                        $creators->appendChild( $author );
+            } else {
+                $author->appendChild( $xml->create_data_element("givenName",$given ) );
+            }
+            if ($family eq ''){
+                $creators->appendChild( $author );
+            } else {
+                $author->appendChild( $xml->create_data_element("familyName", $family ) );
+            }
+            if ($dataobj->exists_and_set( "creators_orcid" )) {
+
+                if ($orcid eq '') {
                     $creators->appendChild( $author );
-          } else {
-            $author->appendChild( $xml->create_data_element("givenName",$given ) );
-          }
-        if ($family eq ''){
+                } else {
+                  $author->appendChild( $xml->create_data_element("nameIdentifier", $orcid, schemeURI=>"http://orcid.org/", nameIdentifierScheme=>"ORCID" ) );
+                }
+            }
+            
             $creators->appendChild( $author );
-          } else {
-            $author->appendChild( $xml->create_data_element("familyName", $family ) );
-          }
-        if ($dataobj->exists_and_set( "creators_orcid" )) {
-
-if ($orcid eq '') {
-            $creators->appendChild( $author );
-          }
-            else {
-          $author->appendChild( $xml->create_data_element("nameIdentifier", $orcid, schemeURI=>"http://orcid.org/", nameIdentifierScheme=>"ORCID" ) );
-          }
         }
-          $creators->appendChild( $author );
-          }
-          $entry->appendChild( $creators );
-        }
+        $entry->appendChild( $creators );
+    }
 
 
     if ($dataobj->exists_and_set( "title" )) {
-                        my $titles = $xml->create_element( "titles" );
-                        $titles->appendChild(  $xml->create_data_element( "title",  $dataobj->render_value( "title" ), "xml:lang"=>"en-us" ) );
+        my $titles = $xml->create_element( "titles" );
+        $titles->appendChild(  $xml->create_data_element( "title",  $dataobj->render_value( "title" ), "xml:lang"=>"en-us" ) );
 
-      $entry->appendChild( $titles );
-                }
+        $entry->appendChild( $titles );
+    }
+    $entry->appendChild( $xml->create_data_element( "publisher", $repo->get_conf( "datacitedoi", "publisher") ) );
 
-$entry->appendChild( $xml->create_data_element( "publisher", $repo->get_conf( "datacitedoi", "publisher") ) );
-
-if ($dataobj->exists_and_set( "date" )) {
-    $dataobj->get_value( "date" ) =~ /^([0-9]{4})/;
-  $entry->appendChild( $xml->create_data_element( "publicationYear", $1 ) ) if $1;
-
-}
+    if ($dataobj->exists_and_set( "date" )) {
+            $dataobj->get_value( "date" ) =~ /^([0-9]{4})/;
+            $entry->appendChild( $xml->create_data_element( "publicationYear", $1 ) ) if $1;
+    }
 
     # AH 03/11/2016: mapping the data in the EPrints keywords field to a <subjects> tag.
     # If the keywords field is a multiple - and therefore, an array ref - then
@@ -165,7 +155,7 @@ if ($dataobj->exists_and_set( "date" )) {
           $subjects->appendChild(  $xml->create_data_element( "subject", $keyword, "xml:lang"=>"en-us") );
         }
 
- $entry->appendChild( $subjects );
+        $entry->appendChild( $subjects );
       } else {
         $subjects->appendChild(  $xml->create_data_element( "subject", $keywords, "xml:lang"=>"en-us") );
         $entry->appendChild( $subjects );
@@ -235,127 +225,116 @@ if ($dataobj->exists_and_set( "date" )) {
     #   }
     #   $entry->appendChild( $contributors );
     # }
-
-  #BF this is a can call which checks and calls for a sub inside the z_datacitedoi called funderrr
-      if( $repo->can_call( "datacite_custom_funder" ) )
-      {
-        if( defined( $repo->call( "datacite_custom_funder", $xml, $entry, $dataobj ) ) )
-                               {}
-                                 else {
-
-        my $funders = $dataobj->get_value( "funders" );
-        my $grant = $dataobj->get_value( "grant" );
-       my $projects = $dataobj->get_value( "projects" );
-          if ($dataobj->exists_and_set( "funders" )) {
-            my $thefunders = $xml->create_element( "funders" );
-            foreach my $funder ( @$funders )
-            {
-
-
-              foreach my $project ( @$projects )
-              {
-            $thefunders->appendChild(  $xml->create_data_element( "funderName", $funder) );
-            $thefunders->appendChild(  $xml->create_data_element( "awardNumber", $grant) );
-
+    
+    #BF this is a can call which checks and calls for a sub inside the z_datacitedoi called funderrr
+    if( $repo->can_call( "datacite_custom_funder" ) ){
+        unless( defined( $repo->call( "datacite_custom_funder", $xml, $entry, $dataobj ) ) ){
+            my $funders = $dataobj->get_value( "funders" );
+            my $grant = $dataobj->get_value( "grant" );
+            my $projects = $dataobj->get_value( "projects" );
+            if ($dataobj->exists_and_set( "funders" )) {
+                my $thefunders = $xml->create_element( "funders" );
+                foreach my $funder ( @$funders ){
+                    foreach my $project ( @$projects ){
+                        $thefunders->appendChild(  $xml->create_data_element( "funderName", $funder) );
+                        $thefunders->appendChild(  $xml->create_data_element( "awardNumber", $grant) );
+                    }
+                }
+                $entry->appendChild( $thefunders );
+            }
           }
-        }
-            $entry->appendChild( $thefunders );
+    }
 
-}
-          }
-        }
+    if ($dataobj->exists_and_set( "repo_link" )) {
 
 
-
-
-        if ($dataobj->exists_and_set( "repo_link" )) {
+        #If we have a custom override
+        if( $repo->can_call( "datacite_custom_repo_link" ) ){
+            my $relatedIdentifiers = $repo->call( "datacite_custom_repo_link", $xml, $entry, $dataobj ); 
+            $entry->appendChild( $relatedIdentifiers ) if (defined $relatedIdentifiers);
+        #default action
+        }else{
             my $theurls = $dataobj->get_value( "repo_link" );
             my $relatedIdentifiers = $xml->create_element( "relatedIdentifiers" );
-        foreach my $theurl ( @$theurls )
-          {
-            my $linkk = $theurl->{link};
-        if (!$linkk eq ''){
-                $relatedIdentifiers->appendChild(  $xml->create_data_element( "relatedIdentifier", $linkk, relatedIdentifierType=>"URL", relationType=>"IsReferencedBy" ) );
-          }
+            foreach my $theurl ( @$theurls ) {
+                my $linkk = $theurl->{link};
+                if (!$linkk eq ''){
+                    $relatedIdentifiers->appendChild(  $xml->create_data_element( "relatedIdentifier", $linkk, relatedIdentifierType=>"URL", relationType=>"IsReferencedBy" ) );
+                }
                 $entry->appendChild( $relatedIdentifiers );
-          }
+            }
         }
+    }
 
-        if ($dataobj->exists_and_set( "abstract" )) {
+    if ($dataobj->exists_and_set( "abstract" )) {
 
-          my $abstract = $dataobj->get_value( "abstract" );
-          my $description = $xml->create_element( "descriptions" );
+        my $abstract = $dataobj->get_value( "abstract" );
+        my $description = $xml->create_element( "descriptions" );
 
-          $description->appendChild(  $xml->create_data_element( "description", $abstract, "xml:lang"=>"en-us", descriptionType=>"Abstract" ) );
+        $description->appendChild(  $xml->create_data_element( "description", $abstract, "xml:lang"=>"en-us", descriptionType=>"Abstract" ) );
 
-          if ($dataobj->exists_and_set( "collection_method" )) {
+        if ($dataobj->exists_and_set( "collection_method" )) {
             my $collection = $dataobj->get_value("collection_method");
             $description->appendChild( $xml->create_data_element("description", $collection, descriptionType=>"Methods"));
-          }
-
-          if ($dataobj->exists_and_set( "provenance" )) {
-            my $processing = $dataobj->get_value("provenance");
-            $description->appendChild( $xml->create_data_element("description", $processing, descriptionType=>"Methods"));
-          }
-
-          $entry->appendChild( $description );
-
         }
 
-          #BF this is a can call which checks and calls for a sub inside the z_datacitedoi called laaanguages
-          if( $repo->can_call( "datacite_custom_language" ) )
-          {
-            if( defined( $repo->call( "datacite_custom_language", $xml, $entry, $dataobj ) ) )
-                                   {}
-                                     else {
+        if ($dataobj->exists_and_set( "provenance" )) {
+            my $processing = $dataobj->get_value("provenance");
+            $description->appendChild( $xml->create_data_element("description", $processing, descriptionType=>"Methods"));
+        }
 
+        $entry->appendChild( $description );
+    }
 
-if ($dataobj->exists_and_set( "language" )) {
-                          my $lan = $dataobj->get_value( "language" );
-                         $entry->appendChild( $xml->create_data_element( "language", $lan) );
-                        }
-                    }
-                  }
-
-            # AH 16/11/2016: rendering the geoLocations XML elements
-            # Note: the initial conditional checks to see if the geographic_cover
-            # metadata field exists and is set. This was done because geographic_cover
-            # is part of the z_recollect_metadata_profile.pl file within the Recollect
-            # plugin and many repositories make it a mandatory field in the workflow.
-
-            if( $dataobj->exists_and_set( "geographic_cover" ) ) {
-
-              #Create XML elements
-              my $geo_locations = $xml->create_element( "geoLocations" );
-              my $geo_location = $xml->create_element( "geoLocation" );
-
-              # Get value of geographic_cover field and append to $geo_location XML element
-              my $geographic_cover = $dataobj->get_value( "geographic_cover" );
-              $geo_location->appendChild( $xml->create_data_element("geoLocationPlace", $geographic_cover ) );
-
-              # Get values of bounding box
-              my $west = $dataobj->get_value( "bounding_box_west_edge" );
-              my $east = $dataobj->get_value( "bounding_box_east_edge" );
-              my $south = $dataobj->get_value( "bounding_box_south_edge" );
-              my $north = $dataobj->get_value( "bounding_box_north_edge" );
-
-              # Check to see if $north, $south, $east, or $west values are defined
-              if (defined $north && defined $south && defined $east && defined $west ) {
-                # Created $geo_location_box XML element
-                my $geo_location_box = $xml->create_element( "geoLocationBox" );
-                # If $long/lat is defined, created XML element with the appropriate value
-                  $geo_location_box->appendChild(  $xml->create_data_element( "westBoundLongitude", $west) );
-                  $geo_location_box->appendChild(  $xml->create_data_element( "eastBoundLongitude", $east) );
-                  $geo_location_box->appendChild(  $xml->create_data_element( "southBoundLatitude", $south) );
-                  $geo_location_box->appendChild(  $xml->create_data_element( "northBoundLatitude", $north) );
-                # Append child $geo_location_box XML element to parent $geo_location XML element
-                $geo_location->appendChild( $geo_location_box );
-              }
-              # Append child $geo_location XML element to parent $geo_locations XML element
-              $geo_locations->appendChild( $geo_location );
-              # Append $geo_locations XML element to XML document
-              $entry->appendChild( $geo_locations );
+    #BF this is a can call which checks and calls for a sub inside the z_datacitedoi called laaanguages
+    if( $repo->can_call( "datacite_custom_language" ) ){
+        unless( defined( $repo->call( "datacite_custom_language", $xml, $entry, $dataobj ) ) ){
+            if ($dataobj->exists_and_set( "language" )) {
+                my $lan = $dataobj->get_value( "language" );
+                $entry->appendChild( $xml->create_data_element( "language", $lan) );
             }
+        }
+    }
+
+    # AH 16/11/2016: rendering the geoLocations XML elements
+    # Note: the initial conditional checks to see if the geographic_cover
+    # metadata field exists and is set. This was done because geographic_cover
+    # is part of the z_recollect_metadata_profile.pl file within the Recollect
+    # plugin and many repositories make it a mandatory field in the workflow.
+
+    if( $dataobj->exists_and_set( "geographic_cover" ) ) {
+
+      #Create XML elements
+      my $geo_locations = $xml->create_element( "geoLocations" );
+      my $geo_location = $xml->create_element( "geoLocation" );
+
+      # Get value of geographic_cover field and append to $geo_location XML element
+      my $geographic_cover = $dataobj->get_value( "geographic_cover" );
+      $geo_location->appendChild( $xml->create_data_element("geoLocationPlace", $geographic_cover ) );
+
+      # Get values of bounding box
+      my $west = $dataobj->get_value( "bounding_box_west_edge" );
+      my $east = $dataobj->get_value( "bounding_box_east_edge" );
+      my $south = $dataobj->get_value( "bounding_box_south_edge" );
+      my $north = $dataobj->get_value( "bounding_box_north_edge" );
+
+      # Check to see if $north, $south, $east, or $west values are defined
+      if (defined $north && defined $south && defined $east && defined $west ) {
+        # Created $geo_location_box XML element
+        my $geo_location_box = $xml->create_element( "geoLocationBox" );
+        # If $long/lat is defined, created XML element with the appropriate value
+          $geo_location_box->appendChild(  $xml->create_data_element( "westBoundLongitude", $west) );
+          $geo_location_box->appendChild(  $xml->create_data_element( "eastBoundLongitude", $east) );
+          $geo_location_box->appendChild(  $xml->create_data_element( "southBoundLatitude", $south) );
+          $geo_location_box->appendChild(  $xml->create_data_element( "northBoundLatitude", $north) );
+        # Append child $geo_location_box XML element to parent $geo_location XML element
+        $geo_location->appendChild( $geo_location_box );
+      }
+      # Append child $geo_location XML element to parent $geo_locations XML element
+      $geo_locations->appendChild( $geo_location );
+      # Append $geo_locations XML element to XML document
+      $entry->appendChild( $geo_locations );
+    }
 
             return '<?xml version="1.0" encoding="UTF-8"?>'."\n".$xml->to_string($entry);
 }
