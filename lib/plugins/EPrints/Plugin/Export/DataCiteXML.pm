@@ -247,23 +247,24 @@ sub output_dataobj
 
     if ($dataobj->exists_and_set( "repo_link" )) {
 
+# RelatedIdentifier should be more careful in identifying the relationType so we will revisit after more input from the DataCite community probably for milestone 1.3
 
-        #If we have a custom override
-        if( $repo->can_call( "datacite_custom_repo_link" ) ){
-            my $relatedIdentifiers = $repo->call( "datacite_custom_repo_link", $xml, $entry, $dataobj ); 
-            $entry->appendChild( $relatedIdentifiers ) if (defined $relatedIdentifiers);
-        #default action
-        }else{
-            my $theurls = $dataobj->get_value( "repo_link" );
-            my $relatedIdentifiers = $xml->create_element( "relatedIdentifiers" );
-            foreach my $theurl ( @$theurls ) {
-                my $linkk = $theurl->{link};
-                if (!$linkk eq ''){
-                    $relatedIdentifiers->appendChild(  $xml->create_data_element( "relatedIdentifier", $linkk, relatedIdentifierType=>"URL", relationType=>"IsReferencedBy" ) );
-                }
-                $entry->appendChild( $relatedIdentifiers );
-            }
-        }
+#        #If we have a custom override
+#        if( $repo->can_call( "datacite_custom_repo_link" ) ){
+#            my $relatedIdentifiers = $repo->call( "datacite_custom_repo_link", $xml, $entry, $dataobj ); 
+#            $entry->appendChild( $relatedIdentifiers ) if (defined $relatedIdentifiers);
+#        #default action
+#        }else{
+#            my $theurls = $dataobj->get_value( "repo_link" );
+#            my $relatedIdentifiers = $xml->create_element( "relatedIdentifiers" );
+#            foreach my $theurl ( @$theurls ) {
+#                my $linkk = $theurl->{link};
+#                if (!$linkk eq ''){
+#                    $relatedIdentifiers->appendChild(  $xml->create_data_element( "relatedIdentifier", $linkk, relatedIdentifierType=>"URL", relationType=>"IsReferencedBy" ) );
+#                }
+#                $entry->appendChild( $relatedIdentifiers );
+#            }
+#        }
     }
 
     if ($dataobj->exists_and_set( "abstract" )) {
