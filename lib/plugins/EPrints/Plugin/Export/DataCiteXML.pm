@@ -58,75 +58,26 @@ sub output_dataobj
             my $prefix = $repo->get_conf( "datacitedoi", "prefix");
             return $thisdoi if($thisdoi !~ /^$prefix/);
     }
-
     $entry->appendChild( $xml->create_data_element( "identifier", $thisdoi , identifierType=>"DOI" ) );
 
-    # AH 04/11/2016: adding <resourceType> element as it is required for the
-    # DataCite 4.0 XML Metadata Schema. For publications repositories, it uses the
-    # eprint_type value. For data repositories, it uses the eprint_data_type value.
-    my $resourceType_element;
-    my $pub_resourceType = $repo->get_conf( "datacitedoi", "typemap", $dataobj->get_value("type") );
-    if(defined $pub_resourceType){
-       $resourceType_element = $xml->create_data_element( "resourceType", $pub_resourceType->{'v'}, resourceTypeGeneral=>$pub_resourceType->{'a'});
-    }
-    if( $dataobj->exists_and_set( "data_type" ) ) {
-      my $data_type = $dataobj->get_value( "data_type" );
-      $resourceType_element = $xml->create_data_element( "resourceType", $data_type, resourceTypeGeneral=>$data_type);
-    }
-    $entry->appendChild( $resourceType_element );
+       foreach my $field ( $dataobj->{dataset}->get_fields )
+        {
+            my $mapping_fn = "datacite_mapping_".$field->get_name;
+            if($repo->can_call($mapping_fn) && $dataobj->exists_and_set($field->get_name)){
+                    my $mapped_element = $repo->call( $mapping_fn, $xml, $dataobj, $repo, $dataobj->value($field->get_name) );
+                    $entry->appendChild( $mapped_element ) if(defined $mapped_element);
+            }        
+        }
 
-    #RM otherwise we'll leave this alone for now
-
+    #RM extract licens from documents by some means:
     my $license = undef;
-
-
     if( $repo->can_call( "datacite_license" ) ){
             $license = $repo->call( "datacite_license", $xml, $entry, $dataobj, $repo );
     }
 
-    if( $dataobj->exists_and_set( "creators" ) ){
-        my $creators = $xml->create_element( "creators" );
-        my $names = $dataobj->get_value( "creators" );
 
-        foreach my $name ( @$names ){
-            my $author = $xml->create_element( "creator" );
-
-            my $name_str = EPrints::Utils::make_name_string( $name->{name});
-
-
-
-            my $family = $name->{name}->{family};
-            my $given = $name->{name}->{given};
-            my $orcid = $name->{orcid};
-
-            if ($family eq '' && $given eq ''){
-                  $creators->appendChild( $author );
-            } else {
-                $author->appendChild( $xml->create_data_element("creatorName", $name_str ) );
-            }
-            if ($given eq ''){
-                        $creators->appendChild( $author );
-            } else {
-                $author->appendChild( $xml->create_data_element("givenName",$given ) );
-            }
-            if ($family eq ''){
-                $creators->appendChild( $author );
-            } else {
-                $author->appendChild( $xml->create_data_element("familyName", $family ) );
-            }
-            if ($dataobj->exists_and_set( "creators_orcid" )) {
-
-                if ($orcid eq '') {
-                    $creators->appendChild( $author );
-                } else {
-                  $author->appendChild( $xml->create_data_element("nameIdentifier", $orcid, schemeURI=>"http://orcid.org/", nameIdentifierScheme=>"ORCID" ) );
-                }
-            }
-            
-            $creators->appendChild( $author );
-        }
-        $entry->appendChild( $creators );
-    }
+    ##########################################################################################################################################################################
+    ################################# From here on in you can redefine datacite_ampping_[fieldname] sub routines in lib/cfg.d/zzz_datacite_mapping.pl  #######################
 
 
     if ($dataobj->exists_and_set( "title" )) {
