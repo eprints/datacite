@@ -64,72 +64,11 @@ sub output_dataobj
             my $mapping_fn = "datacite_mapping_".$field->get_name;
             if($repo->can_call($mapping_fn) && $dataobj->exists_and_set($field->get_name)){
                     my $mapped_element = $repo->call( $mapping_fn, $xml, $dataobj, $repo, $dataobj->value($field->get_name) );
-                    print STDERR "MAPPED E: ".$mapped_element."\n";
                     $entry->appendChild( $mapped_element ) if(defined $mapped_element);
             }
         }
 
-    #RM extract licens from documents by some means:
-    # my $license = undef;
-    # if( $repo->can_call( "datacite_license" ) ){
-    #         $license = $repo->call( "datacite_license", $xml, $entry, $dataobj, $repo );
-    # }
-
-
-    ##########################################################################################################################################################################
-    ################################# From here on in you can redefine datacite_ampping_[fieldname] sub routines in lib/cfg.d/zzz_datacite_mapping.pl  #######################
-
-
-
-
-    # AH 03/11/2016: mapping the data in the EPrints keywords field to a <subjects> tag.
-    # If the keywords field is a multiple - and therefore, an array ref - then
-    # iterate through array and make each array element its own <subject> element.
-    # Otherwise, if the keywords field is a single block of text, take the string
-    # and make it a single <subject> element
-
-
-    # AH 16/12/2016: commenting out the creation of the <contributors> element. This is because the
-    # DataCite 4.0 Schema requires a contributorType attribute, which needs to be mapped. According to
-    # https://schema.datacite.org/meta/kernel-4.0/doc/DataCite-MetadataKernel_v4.0.pdf (page 16), there
-    # is a controlled list of contributorType options and it would be advisable to alter the
-    # Recollect workflow to make use of this controlled list (e.g. a namedset of approved values)
-    # and then map the values from this field to the XML found below.
-    # Note: if you do not supply a contributorType, the coin DOI process will fail
-    # because the contributorType attribute is mandatory. As such, and because the parent <contributor>
-    # element is not mandatory, it will be commented out and not sent to DataCite pending further work from ULCC.
-
-
-
-
-
-
-
-
-    if ($dataobj->exists_and_set( "repo_link" )) {
-
-
-
-    }
-
-
-
-    # #BF this is a can call which checks and calls for a sub inside the z_datacitedoi called laaanguages
-    # if( $repo->can_call( "datacite_custom_language" ) ){
-    #     unless( defined( $repo->call( "datacite_custom_language", $xml, $entry, $dataobj ) ) ){
-    #         if ($dataobj->exists_and_set( "language" )) {
-    #             my $lan = $dataobj->get_value( "language" );
-    #             $entry->appendChild( $xml->create_data_element( "language", $lan) );
-    #         }
-    #     }
-    # }
-
-    # AH 16/11/2016: rendering the geoLocations XML elements
-    # Note: the initial conditional checks to see if the geographic_cover
-    # metadata field exists and is set. This was done because geographic_cover
-    # is part of the z_recollect_metadata_profile.pl file within the Recollect
-    # plugin and many repositories make it a mandatory field in the workflow.
-
+####### From here on in you can redefine datacite_ampping_[fieldname] sub routines in lib/cfg.d/zzz_datacite_mapping.pl  #######################
 
 
             return '<?xml version="1.0" encoding="UTF-8"?>'."\n".$xml->to_string($entry);
