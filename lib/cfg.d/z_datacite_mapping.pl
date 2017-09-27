@@ -217,31 +217,31 @@ $c->{datacite_mapping_funders} = sub {
 
 
 $c->{datacite_mapping_rights} = sub {
-    my($xml, $dataobj, $repo, $value) = @_;
-    my $author = $xml->create_element("rightsList");
-
-    foreach my $doc($dataobj->get_all_documents()) {
+    my ( $xml, $dataobj, $repo, $value ) = @_;
+    my $author   = $xml->create_element("rightsList");
+    my $previous = {};
+    foreach my $doc ( $dataobj->get_all_documents() ) {
 
         my $license = $doc->get_value("license");
 
-        if (defined $license && $license ne '') {
-
-            if ($license eq "attached") {
-
-                $author ->appendChild($xml->create_data_element("rights", $repo->phrase("licenses_typename_attached"), rightsURI =>$doc->get_url));
-            } else {
-
-                my $licenseuri = $repo->phrase("licenses_uri_$license");
-                $author->appendChild($xml->create_data_element("rights", $license, rightsURI =>$licenseuri));
+        if ( defined $license && $license ne '' ) {
+            unless ( defined $previous->{$license} ) {
+                if ( $license eq "attached" ) {
+                    $author->appendChild($xml->create_data_element("rights", $repo->phrase("licenses_typename_attached"), rightsURI => $doc->get_url));
+                }
+                else {
+                    my $licenseuri = $repo->phrase("licenses_uri_$license");
+                    $author->appendChild($xml->create_data_element("rights", $license, rightsURI => $licenseuri));
+                }
             }
         }
+        $previous->{$license} = "anything really";
 
-
+        print STDERR $previous->{$license}, "\n";
     }
+
     return $author;
 };
-
-
 
 
 
