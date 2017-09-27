@@ -1,10 +1,26 @@
 <?xml version='1.0' encoding='utf-8'?>
-<epm xmlns='http://eprints.org/ep2/data/2.0' id='http://pok.pok.com/id/epm/DataCiteDoi'>
+<epm xmlns='http://eprints.org/ep2/data/2.0' id='http://localhost/id/epm/DataCiteDoi'>
   <epmid>DataCiteDoi</epmid>
-  <uri>http://clean.ep.devorkin:8082/id/epm/DataCiteDoi</uri>
+  <uri>http://pok.pok.com/id/epm/DataCiteDoi</uri>
   <documents>
     <document>
       <files>
+        <file>
+          <datasetid>document</datasetid>
+          <filename>epm/DataCiteDoi/cfg/cfg.d/z_datacitedoi.pl</filename>
+          <mime_type>text/plain</mime_type>
+          <hash>670a102e25b0b7636091ccf15d200847</hash>
+          <hash_type>MD5</hash_type>
+          <filesize>5046</filesize>
+        </file>
+        <file>
+          <datasetid>document</datasetid>
+          <filename>cfg.d/z_datacite_mapping.pl</filename>
+          <mime_type>text/plain</mime_type>
+          <hash>4f2807b6c4cd8fba51cada676ebf9278</hash>
+          <hash_type>MD5</hash_type>
+          <filesize>8691</filesize>
+        </file>
         <file>
           <datasetid>document</datasetid>
           <filename>lang/en/phrases/coinDOI.xml</filename>
@@ -12,14 +28,6 @@
           <hash>ea8da6c0e471cea13c5b573d115cbbe8</hash>
           <hash_type>MD5</hash_type>
           <filesize>641</filesize>
-        </file>
-        <file>
-          <datasetid>document</datasetid>
-          <filename>static/images/epm/datacitedoi.png</filename>
-          <mime_type>image/png</mime_type>
-          <hash>14e9e2be0a73f452533488634aaea66e</hash>
-          <hash_type>MD5</hash_type>
-          <filesize>101504</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -47,24 +55,16 @@
         </file>
         <file>
           <datasetid>document</datasetid>
-          <filename>cfg.d/z_datacite_mapping.pl</filename>
-          <mime_type>text/plain</mime_type>
-          <hash>4f2807b6c4cd8fba51cada676ebf9278</hash>
+          <filename>static/images/epm/datacitedoi.png</filename>
+          <mime_type>image/png</mime_type>
+          <hash>14e9e2be0a73f452533488634aaea66e</hash>
           <hash_type>MD5</hash_type>
-          <filesize>8691</filesize>
-        </file>
-        <file>
-          <datasetid>document</datasetid>
-          <filename>epm/DataCiteDoi/cfg/cfg.d/z_datacitedoi.pl</filename>
-          <mime_type>text/plain</mime_type>
-          <hash>670a102e25b0b7636091ccf15d200847</hash>
-          <hash_type>MD5</hash_type>
-          <filesize>5046</filesize>
+          <filesize>101504</filesize>
         </file>
       </files>
-      <mime_type>text/plain</mime_type>
-      <format>text</format>
-      <main>epm/DataCiteDoi/cfg/cfg.d/z_datacitedoi.pl</main>
+      <mime_type>image/png</mime_type>
+      <format>image</format>
+      <main>static/images/epm/datacitedoi.png</main>
       <content>install</content>
     </document>
     <document>
@@ -83,7 +83,7 @@
       <content>coverimage</content>
     </document>
   </documents>
-  <version>2.0.0</version>
+  <version>2.0.1</version>
   <creators>
     <item>
       <name>
@@ -93,7 +93,7 @@
       <id>repositories@ulcc.ac.uk</id>
     </item>
   </creators>
-  <datestamp>2017-09-20 15:27:51</datestamp>
+  <datestamp>2017-09-27 12:34:23</datestamp>
   <title>DataCiteDoi - DataCite DOIs for EPrints</title>
   <description>A plugin integrate into the workflow the process of to minting and registering DataCite DOIs</description>
   <home_page>https://github.com/eprintsug/DataCiteDoi</home_page>
