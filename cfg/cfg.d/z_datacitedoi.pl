@@ -29,8 +29,8 @@ $c->{datacitedoi}{publisher} = "Eprints Repo";
 
 # Namespace and location for datacite XML schema
 # feel free to update, though no guarantees it'll be accepted if you do
-$c->{datacitedoi}{xmlns} = "http://datacite.org/schema/kernel-4.0";
-$c->{datacitedoi}{schemaLocation} = $c->{datacitedoi}{xmlns}." http://schema.datacite.org/meta/kernel-4.0/metadata.xsd";
+$c->{datacitedoi}{xmlns} = "http://datacite.org/schema/kernel-4";
+$c->{datacitedoi}{schemaLocation} = $c->{datacitedoi}{xmlns}." http://schema.datacite.org/meta/kernel-4/metadata.xsd";
 
 # need to map eprint type (article, dataset etc) to ResourceType
 # Controled list http://schema.datacite.org/meta/kernel-2.2/doc/DataCite-MetadataKernel_v2.2.pdf
@@ -51,7 +51,7 @@ $c->{datacitedoi}{typemap}{other} = {v=>'Misc',a=>'Collection'};
 $c->{datacitedoi}{typemap}{dataset} = {v=>'Dataset',a=>'Dataset'};
 $c->{datacitedoi}{typemap}{audio} = {v=>'Audio',a=>'Sound'};
 $c->{datacitedoi}{typemap}{video} = {v=>'Video',a=>'Film'};
-
+$c->{datacitedoi}{typemap}{data_collection} = {v=>'Dataset',a=>'Dataset'};
 ###########################
 #### DOI syntax config ####
 ###########################
@@ -117,5 +117,3 @@ if($c->{datacitedoi}{auto_coin}){
 if($c->{datacitedoi}{action_coin}){
  	$c->{plugins}{"Screen::EPrint::Staff::CoinDOI"}{params}{disable} = 0;
 }
-
-
