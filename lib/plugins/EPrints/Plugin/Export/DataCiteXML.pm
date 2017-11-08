@@ -58,22 +58,21 @@ sub output_dataobj
             return $thisdoi if($thisdoi !~ /^$prefix/);
     }
     $entry->appendChild( $xml->create_data_element( "identifier", $thisdoi , identifierType=>"DOI" ) );
-
-       foreach my $field ( $dataobj->{dataset}->get_fields )
-        {
+    
+    foreach my $field ( $dataobj->{dataset}->get_fields ){
             my $mapping_fn = "datacite_mapping_".$field->get_name;
             if($repo->can_call($mapping_fn) && $dataobj->exists_and_set($field->get_name)){
                     my $mapped_element = $repo->call( $mapping_fn, $xml, $dataobj, $repo, $dataobj->value($field->get_name) );
                     $entry->appendChild( $mapped_element ) if(defined $mapped_element);
             }
-
-        # There is no field for rights at EPrints leve so we derive rights from document
+     }
+       
+       # There is no field for rights at EPrints leve so we derive rights from document
         # metadata and as such we need to call our derivation routine outside the above loop
         if($repo->can_call("datacite_mapping_rights")){
-                    my $mapped_element = $repo->call( "datacite_mapping_rights", $xml, $dataobj, $repo, $dataobj->value($field->get_name) );
+                    my $mapped_element = $repo->call( "datacite_mapping_rights", $xml, $dataobj, $repo );
                     $entry->appendChild( $mapped_element ) if(defined $mapped_element);
             }
-          }
 ####### From here on in you can redefine datacite_ampping_[fieldname] sub routines in lib/cfg.d/zzz_datacite_mapping.pl  #######################
 
 
