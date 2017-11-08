@@ -1,42 +1,78 @@
 <?xml version='1.0' encoding='utf-8'?>
-<epm xmlns='http://eprints.org/ep2/data/2.0' id='http://eprints/id/epm/DataCiteDoi'>
+<epm xmlns='http://eprints.org/ep2/data/2.0' id='http://pok.pok.com/id/epm/DataCiteDoi'>
   <epmid>DataCiteDoi</epmid>
-  <uri>http://eprints/id/epm/DataCiteDoi</uri>
+  <uri>http://clean.ep.devorkin:8082/id/epm/DataCiteDoi</uri>
   <documents>
     <document>
       <files>
         <file>
-          <filename>epm/DataCiteDoi/cfg/cfg.d/z_datacitedoi.pl</filename>
-          <mime_type>text/plain</mime_type>
-          <hash>fcb3176e88cf0bccb6c8e000bd1ac0da</hash>
+          <datasetid>document</datasetid>
+          <filename>lang/en/phrases/coinDOI.xml</filename>
+          <mime_type>application/xml</mime_type>
+          <hash>ea8da6c0e471cea13c5b573d115cbbe8</hash>
           <hash_type>MD5</hash_type>
-          <filesize>1070</filesize>
+          <filesize>641</filesize>
         </file>
         <file>
-          <filename>plugins/EPrints/Plugin/Export/DataCiteXML.pm</filename>
-          <mime_type>application/x-symlink</mime_type>
-          <hash>84f4180876ff95bdde9f78a6a4c300e6</hash>
-          <hash_type>MD5</hash_type>
-          <filesize>3898</filesize>
-        </file>
-        <file>
+          <datasetid>document</datasetid>
           <filename>static/images/epm/datacitedoi.png</filename>
-          <mime_type>application/x-symlink</mime_type>
+          <mime_type>image/png</mime_type>
           <hash>14e9e2be0a73f452533488634aaea66e</hash>
           <hash_type>MD5</hash_type>
           <filesize>101504</filesize>
         </file>
+        <file>
+          <datasetid>document</datasetid>
+          <filename>plugins/EPrints/Plugin/Event/DataCiteEvent.pm</filename>
+          <mime_type>text/plain</mime_type>
+          <hash>3fe07ce4a3a6e765b647b16118cc23f2</hash>
+          <hash_type>MD5</hash_type>
+          <filesize>5213</filesize>
+        </file>
+        <file>
+          <datasetid>document</datasetid>
+          <filename>plugins/EPrints/Plugin/Export/DataCiteXML.pm</filename>
+          <mime_type>text/plain</mime_type>
+          <hash>696d1ecb13af35cdf6cba01198219b30</hash>
+          <hash_type>MD5</hash_type>
+          <filesize>2806</filesize>
+        </file>
+        <file>
+          <datasetid>document</datasetid>
+          <filename>plugins/EPrints/Plugin/Screen/EPrint/Staff/CoinDOI.pm</filename>
+          <mime_type>text/plain</mime_type>
+          <hash>0ceae1dd50779c660b2e2a6bb4e4ff27</hash>
+          <hash_type>MD5</hash_type>
+          <filesize>2237</filesize>
+        </file>
+        <file>
+          <datasetid>document</datasetid>
+          <filename>cfg.d/z_datacite_mapping.pl</filename>
+          <mime_type>text/plain</mime_type>
+          <hash>4f2807b6c4cd8fba51cada676ebf9278</hash>
+          <hash_type>MD5</hash_type>
+          <filesize>8691</filesize>
+        </file>
+        <file>
+          <datasetid>document</datasetid>
+          <filename>epm/DataCiteDoi/cfg/cfg.d/z_datacitedoi.pl</filename>
+          <mime_type>text/plain</mime_type>
+          <hash>670a102e25b0b7636091ccf15d200847</hash>
+          <hash_type>MD5</hash_type>
+          <filesize>5046</filesize>
+        </file>
       </files>
-      <mime_type>application/x-symlink</mime_type>
-      <format>other</format>
-      <main>static/images/epm/datacitedoi.png</main>
+      <mime_type>text/plain</mime_type>
+      <format>text</format>
+      <main>epm/DataCiteDoi/cfg/cfg.d/z_datacitedoi.pl</main>
       <content>install</content>
     </document>
     <document>
       <files>
         <file>
+          <datasetid>document</datasetid>
           <filename>static/images/epm/datacitedoi.png</filename>
-          <mime_type>application/x-symlink</mime_type>
+          <mime_type>image/png</mime_type>
           <hash>14e9e2be0a73f452533488634aaea66e</hash>
           <hash_type>MD5</hash_type>
           <filesize>101504</filesize>
@@ -47,15 +83,19 @@
       <content>coverimage</content>
     </document>
   </documents>
-  <version>0.9.0</version>
+  <version>2.0.0</version>
   <creators>
     <item>
       <name>
-        <family>Milsted</family>
-        <given>Andrew</given>
+        <family>McNicholl</family>
+        <given>Rory</given>
       </name>
+      <id>repositories@ulcc.ac.uk</id>
     </item>
   </creators>
-  <title>Data Cite DOI Registration</title>
+  <datestamp>2017-09-20 15:27:51</datestamp>
+  <title>DataCiteDoi - DataCite DOIs for EPrints</title>
+  <description>A plugin integrate into the workflow the process of to minting and registering DataCite DOIs</description>
+  <home_page>https://github.com/eprintsug/DataCiteDoi</home_page>
   <icon>images/epm/datacitedoi.png</icon>
 </epm>
