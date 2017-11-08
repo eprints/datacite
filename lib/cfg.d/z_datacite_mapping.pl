@@ -223,8 +223,6 @@ $c->{datacite_mapping_rights} = sub {
     use Data::Dumper;
     my $author   = $xml->create_element("rightsList");
     my $previous = {};
-    my $docs = $dataobj->get_all_documents();
-    return undef if(scalar @{$docs} == 0);
     foreach my $doc ( $dataobj->get_all_documents() ) {
 
         my $license = $doc->get_value("license");
