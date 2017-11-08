@@ -203,12 +203,14 @@ $c->{datacite_mapping_funders} = sub {
     my $grant = $dataobj->get_value("grant");
     my $projects = $dataobj->get_value("projects");
     if ($dataobj->exists_and_set("funders")) {
-        my $thefunders = $xml->create_element("funders");
+        my $thefunders = $xml->create_element("fundingReferences");
+        my $author = $xml->create_element("fundingReference");
         foreach my $funder(@$funders) {
             foreach my $project(@$projects) {
-                $thefunders->appendChild($xml->create_data_element("funderName", $funder));
-                $thefunders->appendChild($xml->create_data_element("awardNumber", $grant));
+                $author->appendChild($xml->create_data_element("funderName", $funder));
+                $author->appendChild($xml->create_data_element("awardNumber", $grant));
             }
+            $thefunders->appendChild($author);
         }
         return $thefunders;
     }
