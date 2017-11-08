@@ -219,7 +219,7 @@ $c->{datacite_mapping_funders} = sub {
 
 
 $c->{datacite_mapping_rights} = sub {
-    my ( $xml, $dataobj, $repo, $value ) = @_;
+    my ( $xml, $dataobj, $repo ) = @_;
     use Data::Dumper;
     my $author   = $xml->create_element("rightsList");
     my $previous = {};
