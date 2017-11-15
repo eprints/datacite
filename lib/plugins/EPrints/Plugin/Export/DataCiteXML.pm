@@ -66,7 +66,10 @@ sub output_dataobj
                     $entry->appendChild( $mapped_element ) if(defined $mapped_element);
             }
      }
-       
+     
+     # Add in our publisher from the config
+     $entry->appendChild( $xml->create_data_element( "publisher", $repo->get_conf( "datacitedoi", "publisher") ) );
+    
        # There is no field for rights at EPrints leve so we derive rights from document
         # metadata and as such we need to call our derivation routine outside the above loop
         if($repo->can_call("datacite_mapping_rights_from_docs")){
