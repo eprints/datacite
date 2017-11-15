@@ -49,8 +49,9 @@ sub allow_coindoi
 	#TODO a version that works for documents too
 	my $dataobj = $self->{processor}->{eprint}; 
         return 0 unless $repository->get_conf( "datacitedoi", "eprintstatus",  $dataobj->value( "eprint_status" ));
-	#TODO don't allow the coinDOI button if a DOI is already registered (may require a db flag for successful reg)
-        return $self->allow( "eprint/edit:editor" );
+	# Don't show coinDOI button if a DOI is already registered 
+  return 0 if $dataobj->is_set("doi");
+  return $self->allow( "eprint/edit:editor" );
 }
 
 sub action_coindoi
