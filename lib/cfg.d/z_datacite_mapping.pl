@@ -87,7 +87,12 @@ $c->{datacite_mapping_title} = sub {
 };
 
 
+$c->{datacite_mapping_publisher} = sub {
+    my($xml, $dataobj, $repo, $value) = @_;
 
+return $xml->create_data_element("publisher", $dataobj->render_value("publisher"));
+
+};
 
 
 
