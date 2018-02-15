@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <epm xmlns='http://eprints.org/ep2/data/2.0' id='http://192.168.23.142/id/epm/DataCiteDoi'>
   <epmid>DataCiteDoi</epmid>
-  <uri>http://pok.pok.com/id/epm/DataCiteDoi</uri>
+  <uri>http://192.168.23.142/id/epm/DataCiteDoi</uri>
   <documents>
     <document>
       <files>
@@ -49,9 +49,9 @@
           <datasetid>document</datasetid>
           <filename>cfg.d/z_datacite_mapping.pl</filename>
           <mime_type>text/plain</mime_type>
-          <hash>357cce784c38478c92a5cd65b1c99b9f</hash>
+          <hash>de6f2cd2b94f1fb9599b52112dd83754</hash>
           <hash_type>MD5</hash_type>
-          <filesize>9549</filesize>
+          <filesize>9755</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -93,7 +93,7 @@
       <id>repositories@ulcc.ac.uk</id>
     </item>
   </creators>
-  <datestamp>2018-02-15 04:37:56</datestamp>
+  <datestamp>2018-02-15 05:07:35</datestamp>
   <title>DataCiteDoi - DataCite DOIs for EPrints</title>
   <description>A plugin integrate into the workflow the process of to minting and registering DataCite DOIs</description>
   <home_page>https://github.com/eprintsug/DataCiteDoi</home_page>
