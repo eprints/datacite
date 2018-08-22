@@ -4,7 +4,7 @@ DateCiteDoi - A plugin to mint DataCite DOIs to eprints
 Requirements
 -------------
 
-In order to use the DataCite API the plugin requires the following perl libraries on to of EPrints requirements.
+In order to use the DataCite API the plugin requires the following perl libraries on top of EPrints requirements.
 
 ```
 use LWP;
@@ -32,7 +32,7 @@ This config file contains all the configurable settings for the plugin, see comm
 $c->{plugins}{"Export::DataCiteXML"}{params}{disable} = 0;
 $c->{plugins}{"Event::DataCiteEvent"}{params}{disable} = 0;
 
-#which field do use for the doi
+# which field to use for the doi
 $c->{datacitedoi}{eprintdoifield} = "id_number";
 
 #When should you register/update doi info.
@@ -153,7 +153,7 @@ How it works
 /lib/plugins/EPrints/Plugin/Event/DataCiteEvent.pm
 This is added to the queue and actually mints the doi.
 
-lib/plugins/EPrints/Plugin/Sreen/EPrint/Staff/CoinDOI.pm
+lib/plugins/EPrints/Plugin/Screen/EPrint/Staff/CoinDOI.pm
 This adds a button to enable staff to choose when to coin the DOI and request registration
 
 /lib/plugins/EPrints/Plugin/Export/DataCiteXML.pm
