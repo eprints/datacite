@@ -160,6 +160,7 @@ $c->{datacite_mapping_publisher} = sub {
 # Year when the data is made publicly available. 
 # If an embargo period has been in effect, use the date when the embargo period ends.
 
+
 $c->{datacite_mapping_date} = sub {
 
     my ( $xml, $dataobj, $repo ) = @_;
@@ -396,7 +397,8 @@ $c->{datacite_mapping_rights_from_docs} = sub {
 
         my $license = $doc->get_value("license");
         my $content = $doc->get_value("content");
-	    #This doc is the license (for docs that have licese == attached
+
+	    # This doc is the license (for docs that have license == attached
 	    if($content eq "licence"){
 		    $attached_licence = $doc->url;
 		    next;
