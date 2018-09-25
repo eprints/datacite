@@ -44,10 +44,12 @@ $c->{datacitedoi}{publisher} = "Eprints Repo";
 # Namespace and location for datacite XML schema
 # feel free to update, though no guarantees it'll be accepted if you do
 $c->{datacitedoi}{xmlns} = "http://datacite.org/schema/kernel-4";
+# Try this instead:
+# $c->{datacitedoi}{schemaLocation} = $c->{datacitedoi}{xmlns}." ".$c->{datacitedoi}{xmlns}."/metadata.xsd";
 $c->{datacitedoi}{schemaLocation} = $c->{datacitedoi}{xmlns}." http://schema.datacite.org/meta/kernel-4/metadata.xsd";
 
-# need to map eprint type (article, dataset etc) to ResourceType
-# Controled list http://schema.datacite.org/meta/kernel-2.2/doc/DataCite-MetadataKernel_v2.2.pdf
+# Need to map eprint type (article, dataset etc) to DOI ResourceType
+# Controlled list http://schema.datacite.org/meta/kernel-4.1/doc/DataCite-MetadataKernel_v4.1.pdf
 # where v is the ResourceType and a is the resourceTypeGeneral
 #$c->{datacitedoi}{typemap}{book_section} = {v=>'BookSection',a=>'Text'};
 $c->{datacitedoi}{typemap}{article} = {v=>'Article',a=>'Text'};
