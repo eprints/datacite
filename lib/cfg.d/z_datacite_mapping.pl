@@ -399,7 +399,7 @@ $c->{datacite_mapping_rights_from_docs} = sub {
         my $content = $doc->get_value("content");
 
 	    # This doc is the license (for docs that have license == attached
-	    if($content eq "licence"){
+	    if ((defined $content) && ($content eq "licence")){
 		    $attached_licence = $doc->url;
 		    next;
 	    }
