@@ -35,7 +35,7 @@ $c->{datacite_mapping_type} = sub {
         Service
         Software
         Sound
-        Text15
+        Text
         Workflow
         Other
     /];
