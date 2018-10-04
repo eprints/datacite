@@ -8,7 +8,12 @@ package EPrints::Plugin::Event::DataCiteEvent;
 
 use EPrints::Plugin::Event;
 
-# Network client libraries included below in datacite_request
+eval "use LWP; use HTTP::Headers::Util; 1";
+if ( $@ ) { print STDERR "Unable to import LWP or HTTP::Headers::Util.\n"; }
+
+eval "use WWW::Curl::Easy; 1";
+if ( $@ ) { print STDERR "Unable to import WWW::Curl::Easy.\n"; }
+
 
 @ISA = qw( EPrints::Plugin::Event );
 
@@ -88,9 +93,6 @@ sub datacite_doi
 sub datacite_request {
   my ($method, $url, $user_name, $user_pw, $content, $content_type) = @_;
 
-  use LWP;
-  use HTTP::Headers::Util;
-
   # build request
   my $headers = HTTP::Headers->new(
     'Accept'  => 'application/xml',
@@ -114,7 +116,6 @@ sub datacite_request {
 
 sub datacite_request_curl {
   my ($url, $user_name, $user_pw, $content, $content_type) = @_;
-  use WWW::Curl::Easy; 
 
   # build request
   my @myheaders = (
