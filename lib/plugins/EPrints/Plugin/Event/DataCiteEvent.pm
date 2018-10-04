@@ -114,6 +114,7 @@ sub datacite_request {
 
 sub datacite_request_curl {
   my ($url, $user_name, $user_pw, $content, $content_type) = @_;
+  use WWW::Curl::Easy; 
 
   # build request
   my @myheaders = (
