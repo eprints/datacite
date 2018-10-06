@@ -49,9 +49,9 @@
           <datasetid>document</datasetid>
           <filename>cfg.d/z_datacite_mapping.pl</filename>
           <mime_type>text/plain</mime_type>
-          <hash>40c8fa9f6c2e30916e2fdde204eab115</hash>
+          <hash>b9f99f56452c34040849969bea359e79</hash>
           <hash_type>MD5</hash_type>
-          <filesize>19847</filesize>
+          <filesize>19851</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -93,7 +93,7 @@
       <id>repositories@ulcc.ac.uk</id>
     </item>
   </creators>
-  <datestamp>2018-10-06 01:49:47</datestamp>
+  <datestamp>2018-10-06 01:57:58</datestamp>
   <title>DataCiteDoi - DataCite DOIs for EPrints</title>
   <description>A plugin integrate into the workflow the process of to minting and registering DataCite DOIs</description>
   <home_page>https://github.com/eprintsug/DataCiteDoi</home_page>
