@@ -505,8 +505,9 @@ $c->{validate_datacite} = sub
 				"datacite_validate:need_title",
 				title=>$title );
 	}
-
-	if( !$eprint->is_set( "publisher" ) )
+    #we will accept the publisher set in config... as long as it has been set to something other than the default
+	if( !$eprint->is_set( "publisher" ) && EPrints::Utils::is_set($repo->get_conf("datacitedoi","publisher")) &&
+        $repo->get_conf("datacitedoi","publisher") ne "EPrints Repo" )
 	{
 		my $publisher = $xml->create_element( "span", class=>"ep_problem_field:publisher" );
         my $default_publisher = $repository->make_text( $repository->get_conf("datacitedoi","publisher") );
