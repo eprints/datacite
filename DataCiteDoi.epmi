@@ -83,7 +83,7 @@
       <content>coverimage</content>
     </document>
   </documents>
-  <version>2.0.1</version>
+  <version>2.1.0-rc</version>
   <creators>
     <item>
       <name>
@@ -93,7 +93,7 @@
       <id>repositories@ulcc.ac.uk</id>
     </item>
   </creators>
-  <datestamp>2018-02-15 05:07:35</datestamp>
+  <datestamp>2018-10-09 09:22:00</datestamp>
   <title>DataCiteDoi - DataCite DOIs for EPrints</title>
   <description>A plugin integrate into the workflow the process of to minting and registering DataCite DOIs</description>
   <home_page>https://github.com/eprintsug/DataCiteDoi</home_page>
