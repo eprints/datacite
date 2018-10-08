@@ -58,7 +58,7 @@ sub datacite_doi
 
 		if($response_code !~ /20(1|0)/){
 			$repository->log("Metadata response from datacite api: $response_code: $response_content");
-			$repository->log("BTW the \$doi was:\n$thisdoi");
+			$repository->log("XML submitted was:\n$xml");
 			return EPrints::Const::HTTP_INTERNAL_SERVER_ERROR;
 		}
 		#register doi
@@ -77,7 +77,7 @@ sub datacite_doi
 		}
 		if($response_code  !~ /20(1|0)/){
 			$repository->log("Registration response from datacite api: $response_code: $response_content");
-			$repository->log("BTW the \$doi_reg was:\n$doi_reg");
+			$repository->log("XML submitted was:\n$xml");
 			return EPrints::Const::HTTP_INTERNAL_SERVER_ERROR;
 		}
 
