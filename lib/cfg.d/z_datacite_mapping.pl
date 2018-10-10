@@ -115,10 +115,14 @@ $c->{datacite_mapping_creators} = sub {
     if($dataobj->exists_and_set("corp_creators")){
 
         $creators = $xml->create_element("creators") if (!defined $creators);
-        $creators->appendChild(my $creator = $xml->create_element("creator"));
-        $creator->appendChild($xml->create_data_element("creatorName", $dataobj->value("corp_creators")));
-
+        # Corp creator is a multiple
+        foreach my $corp ( @{ $dataobj->get_value( 'corp_creators' ) } ) {
+           my $corp_creator = $xml->create_element('creator');
+            $corp_creator->appendChild($xml->create_data_element("creatorName", $corp));
+            $creators->appendChild($corp_creator);
+        }
     }
+
     return $creators
 };
 
