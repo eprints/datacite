@@ -95,7 +95,7 @@
   </creators>
   <datestamp>2018-10-06 01:57:58</datestamp>
   <title>DataCiteDoi - DataCite DOIs for EPrints</title>
-  <description>A plugin integrate into the workflow the process of to minting and registering DataCite DOIs</description>
+  <description>Integrate minting and registering DataCite DOIs in to EPrints</description>
   <home_page>https://github.com/eprintsug/DataCiteDoi</home_page>
   <icon>images/epm/datacitedoi.png</icon>
 </epm>
