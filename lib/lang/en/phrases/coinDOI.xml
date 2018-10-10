@@ -127,6 +127,8 @@
 
     <epp:phrase id="datacite_validate:doi_prefix_mismatch"><p>Your server hostname matches the preprod regex <strong><epc:pin name="match_regexp" textonly="yes" /></strong> but is not using the test DOI prefix - current prefix is <strong><epc:pin name="configured_doi_prefix" /></strong>.</p></epp:phrase>
 
+    <!-- Would be nice to hotlink the plugin typemap too -->
+    <epp:phrase id="datacite_validate:need_mapped_type"><p>Your eprint is either <epc:pin name="types">missing its type</epc:pin> or the type has no match in the plugin typemap.</p></epp:phrase>
 
 
 </epp:phrases>

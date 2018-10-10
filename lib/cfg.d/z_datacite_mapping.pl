@@ -532,6 +532,16 @@ $c->{validate_datacite} = sub
 				dates=>$dates );
 	}
 
+	# If we don't have a type or its not in our mapping, thats bad
+	if ( !$dataobj->exists_and_set("type") || !$repository->get_conf("datacitedoi", "typemap", $dataobj->value("type")))
+	{
+		my $types = $xml->create_element( "span", class=>"ep_problem_field:type" );
+
+		push @problems, $repository->html_phrase(
+				"datacite_validate:need_mapped_type",
+				types=>$types );
+	}
+
 	return( @problems );
 };
 
