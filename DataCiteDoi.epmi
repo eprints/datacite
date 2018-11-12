@@ -9,9 +9,9 @@
           <datasetid>document</datasetid>
           <filename>lang/en/phrases/coinDOI.xml</filename>
           <mime_type>application/xml</mime_type>
-          <hash>3cd96f2881df8806ae1c31ad0b8639fa</hash>
+          <hash>0df177ef1ffd08206156f49996b70c92</hash>
           <hash_type>MD5</hash_type>
-          <filesize>13084</filesize>
+          <filesize>13340</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -25,17 +25,17 @@
           <datasetid>document</datasetid>
           <filename>plugins/EPrints/Plugin/Event/DataCiteEvent.pm</filename>
           <mime_type>text/x-java</mime_type>
-          <hash>80634af7efc8dddaa065a9d39f048cb6</hash>
+          <hash>6a29de65f6268314881d1197cb70b74e</hash>
           <hash_type>MD5</hash_type>
-          <filesize>7262</filesize>
+          <filesize>7606</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
           <filename>plugins/EPrints/Plugin/Export/DataCiteXML.pm</filename>
           <mime_type>text/plain</mime_type>
-          <hash>89c0d8c28939244b869c2c18f7c3a7db</hash>
+          <hash>c2cd69eac69b3008b343d916688b95f4</hash>
           <hash_type>MD5</hash_type>
-          <filesize>3373</filesize>
+          <filesize>2948</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -49,9 +49,9 @@
           <datasetid>document</datasetid>
           <filename>cfg.d/z_datacite_mapping.pl</filename>
           <mime_type>text/plain</mime_type>
-          <hash>b9f99f56452c34040849969bea359e79</hash>
+          <hash>259bcefdcf55f87cabc2d0b002023987</hash>
           <hash_type>MD5</hash_type>
-          <filesize>19851</filesize>
+          <filesize>20371</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -83,7 +83,7 @@
       <content>coverimage</content>
     </document>
   </documents>
-  <version>2.1.0-rc</version>
+  <version>2.1.0</version>
   <creators>
     <item>
       <name>
@@ -93,7 +93,7 @@
       <id>repositories@ulcc.ac.uk</id>
     </item>
   </creators>
-  <datestamp>2018-10-06 01:57:58</datestamp>
+  <datestamp>2018-11-12 12:52:26</datestamp>
   <title>DataCiteDoi - DataCite DOIs for EPrints</title>
   <description>Integrate minting and registering DataCite DOIs in to EPrints</description>
   <home_page>https://github.com/eprintsug/DataCiteDoi</home_page>
