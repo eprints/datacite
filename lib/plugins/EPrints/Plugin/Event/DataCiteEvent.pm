@@ -57,7 +57,7 @@ sub datacite_doi
 		}
 
 		if($response_code !~ /20(1|0)/){
-			$repository->log("Metadata response from datacite api: $response_code: $response_content");
+			$repository->log("Metadata response from datacite api when submitting EPrint $dataobj->id: $response_code: $response_content");
 			$repository->log("XML submitted was:\n$xml");
 			return EPrints::Const::HTTP_INTERNAL_SERVER_ERROR;
 		}
