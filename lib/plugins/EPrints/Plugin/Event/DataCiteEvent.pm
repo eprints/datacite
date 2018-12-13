@@ -8,12 +8,8 @@ package EPrints::Plugin::Event::DataCiteEvent;
 
 use EPrints::Plugin::Event;
 
-eval "use LWP; use HTTP::Headers::Util; 1";
-if ( $@ ) { print STDERR "Unable to import LWP or HTTP::Headers::Util.\n"; }
-
-eval "use WWW::Curl::Easy; 1";
-if ( $@ ) { print STDERR "Unable to import WWW::Curl::Easy.\n"; }
-
+eval "use LWP; use HTTP::Headers::Util";
+eval "use WWW::Curl::Easy";
 
 @ISA = qw( EPrints::Plugin::Event );
 
@@ -22,6 +18,15 @@ sub datacite_doi
        my( $self, $dataobj) = @_;
 
 		my $repository = $self->repository();
+
+		if (defined $repository->get_conf( "datacitedoi", "get_curl")) {
+		       # Try and import Curl.
+		       if ( eval "use WWW::Curl::Easy" ) { print STDERR "Unable to import WWW::Curl::Easy.\n"; }
+		} else {
+		       # Fall back to LWP and rely in its library detection.
+		       if ( eval "use LWP" ) { print STDERR "Unable to import LWP.\n"; }
+		       if ( eval "use HTTP::Headers::Util" ) { print STDERR "Unable to import HTTP::Headers::Util.\n"; }
+		}
 
 		# Check object status first.... TODO: Make work for dataobj == document (just in case)
 		my $shoulddoi = $repository->get_conf( "datacitedoi", "eprintstatus",  $dataobj->value( "eprint_status" ));
