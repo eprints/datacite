@@ -17,9 +17,9 @@
           <datasetid>document</datasetid>
           <filename>static/images/epm/datacitedoi.png</filename>
           <mime_type>image/png</mime_type>
-          <hash>14e9e2be0a73f452533488634aaea66e</hash>
+          <hash>5c277fb358fe95e059b0f2aed2b49ce8</hash>
           <hash_type>MD5</hash_type>
-          <filesize>101504</filesize>
+          <filesize>21105</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -73,9 +73,9 @@
           <datasetid>document</datasetid>
           <filename>static/images/epm/datacitedoi.png</filename>
           <mime_type>image/png</mime_type>
-          <hash>14e9e2be0a73f452533488634aaea66e</hash>
+          <hash>5c277fb358fe95e059b0f2aed2b49ce8</hash>
           <hash_type>MD5</hash_type>
-          <filesize>101504</filesize>
+          <filesize>21105</filesize>
         </file>
       </files>
       <format>image</format>
@@ -93,7 +93,7 @@
       <id>repositories@ulcc.ac.uk</id>
     </item>
   </creators>
-  <datestamp>2018-11-12 12:52:26</datestamp>
+  <datestamp>2018-12-18 20:07:23</datestamp>
   <title>DataCiteDoi - DataCite DOIs for EPrints</title>
   <description>Integrate minting and registering DataCite DOIs in to EPrints</description>
   <home_page>https://github.com/eprintsug/DataCiteDoi</home_page>
